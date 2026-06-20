@@ -11,6 +11,31 @@
 
 ---
 
+## [0.2.0-alpha] - 2026-06-20
+
+> 🔌 基础设施赛季（第零节）— 事件系统类型 · 平台事件总线接口
+
+### Added
+
+- **`packages/types/src/event.ts`**：平台事件系统完整类型定义（新增文件）
+  - `DreamXiEvent` 基类：所有事件均携带 `id`、`type`、`timestamp`、`version` 四个必填字段
+  - `EventType` 联合类型：23 种平台事件，覆盖消息、线程、记忆、公平竞技、系统五大领域
+  - 命名规范：`<领域>.<动词>.<状态>`（如 `message.route.resolved`）
+  - 23 个具体事件接口（discriminated union），均为全 `readonly` 不可变值对象
+  - `AnyDreamXiEvent` 联合类型：支持 TypeScript 类型 narrow 到具体事件
+  - `EventBus` 接口：`emit` / `subscribe` / `once` / `waitFor` / `subscriberCount` / `clear`
+  - `EventFilter`：支持精确类型匹配和通配符 `"*"` 过滤
+  - `EventSubscription`：可取消订阅令牌（`unsubscribe()`）
+  - `EventHandler<T>`：泛型事件处理回调，支持同步/异步
+  - `EventFactory` 接口：6 个常用事件的工厂方法类型
+
+### Changed
+
+- **`packages/types/src/index.ts`**：新增事件系统类型导出（23 个事件接口 + 5 个基础类型 + 2 个接口）
+  - `import type { AnyDreamXiEvent, EventBus } from "@dream-xi/types"` 可用
+
+---
+
 ## [1.4.0-alpha] - 2026-06-26
 
 > ⚡ 服务器赛季（第四节）— 战术 API · 服务器启动入口 · `dream-xi` CLI

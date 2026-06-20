@@ -7,7 +7,7 @@
  *
  * @example
  * ```ts
- * import type { PlayerDefinition, Message, DreamXiConfig } from "@dream-xi/types";
+ * import type { PlayerDefinition, Message, DreamXiConfig, AnyDreamXiEvent } from "@dream-xi/types";
  * ```
  */
 
@@ -84,3 +84,46 @@ export type {
   DreamXiConfig,
   ConfigValidationResult,
 } from "./config.js";
+
+// 事件系统类型
+export type {
+  EventId,
+  EventVersion,
+  EventType,
+  DreamXiEvent,
+  AnyDreamXiEvent,
+  EventFilter,
+  EventHandler,
+  EventSubscription,
+  EventBus,
+  EventFactory,
+  // 消息事件
+  MessageSendRequestedEvent,
+  MessageRouteResolvedEvent,
+  MessageDeliverStartedEvent,
+  MessageDeliverCompletedEvent,
+  MessageDeliverFailedEvent,
+  MessageReplyReceivedEvent,
+  // 线程事件
+  ThreadCreatedEvent,
+  ThreadStatusChangedEvent,
+  // 记忆事件
+  MemoryWriteRequestedEvent,
+  MemoryWriteCompletedEvent,
+  MemoryWriteFailedEvent,
+  MemoryEvictCompletedEvent,
+  MemorySearchCompletedEvent,
+  // 公平竞技事件
+  FairPlayViolationDetectedEvent,
+  FairPlayViolationBlockedEvent,
+  // 路由事件
+  RouterFallbackTriggeredEvent,
+  RouterMentionParsedEvent,
+  RouterIntentInferredEvent,
+  // 系统事件
+  SystemServerStartedEvent,
+  SystemServerStoppedEvent,
+  SystemConfigLoadedEvent,
+  SystemConfigInvalidEvent,
+  SystemHealthCheckedEvent,
+} from "./event.js";
