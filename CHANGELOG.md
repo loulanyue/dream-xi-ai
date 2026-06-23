@@ -11,6 +11,41 @@
 
 ---
 
+## [0.5.0-alpha] - 2026-06-23
+
+> 🔷 类型系统赛季 — 从骨架到有血有肉的 TypeScript 工程！
+
+### Added
+
+- **`tsconfig.json`**：根 TypeScript 严格模式配置，含路径别名 `@dream-xi/types`
+- **`packages/types/`** — `@dream-xi/types` 核心类型包，5 个模块完整定义：
+  - **`player.ts`**：球员类型体系
+    - `PlayerId` / `PlayerNumber` / `PlayerPosition` / `PlayerStatus`
+    - `PlayerCapability`（10 种能力标签）、`ModelProvider`（8 种提供商）
+    - `PlayerDefinition`（静态定义）+ `PlayerState`（运行时状态）
+    - `PLAYER_DEFINITIONS` 常量（4 名球员 + 门将，与 AGENTS.md 精确对应）
+  - **`message.ts`**：A2A 消息类型体系
+    - 6 种内容块：`TextBlock` / `CodeBlock` / `DiffBlock` / `ReviewBlock` / `HandoffBlock` / `ChecklistBlock`
+    - `ReviewFinding`（P1/P2/P3 发现等级）
+    - `MessageRouting`（@mention 显式路由 + 意图推断）
+    - `Message` + `Thread`（线程/战术板）
+  - **`memory.ts`**：三层记忆架构类型
+    - `MemoryLayer`：working / episodic / semantic
+    - `EpisodicMemoryEntry`（Redis 跨线程摘要）
+    - `SemanticMemoryEntry`（持久化经验文档）
+    - `IdentityAnchor`（身份锚定卡，防上下文压缩）
+    - `MemoryConfig`（存储后端配置）
+  - **`tactic.ts`**：战术（Skill）框架类型
+    - 7 种战术分类、触发条件、冲突检测
+    - `TacticDefinition`（含系统提示注入）、`TacticLoadState`
+    - `BUILTIN_TACTIC_IDS` 常量（8 种内置战术）
+  - **`config.ts`**：平台完整配置类型
+    - `DreamXiConfig`（与 `.env.example` 40+ 环境变量一一对应）
+    - `FairPlayConfig`（球队铁律四条约束的类型化配置）
+    - `ConfigValidationResult`（含已配置/在替补席球员列表）
+
+---
+
 ## [0.4.0-alpha] - 2026-06-22
 
 > ⚙️ 工程骨架赛季 — 从纯文档到可启动的工程项目！
