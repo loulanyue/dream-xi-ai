@@ -1,0 +1,28 @@
+{
+  "name": "@dream-xi/router",
+  "version": "0.5.0-alpha",
+  "description": "Dream XI AI — A2A message router: @mention routing, intent inference, thread management.",
+  "keywords": ["dream-xi", "router", "a2a", "agents", "typescript"],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist/**/*.test.js",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@dream-xi/types": "workspace:*"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}

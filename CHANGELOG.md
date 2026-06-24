@@ -11,6 +11,35 @@
 
 ---
 
+## [0.6.0-alpha] - 2026-06-24
+
+> 🔀 传球赛季（第一节）— A2A 消息路由器上线！
+
+### Added
+
+- **`packages/router/`** — `@dream-xi/router` A2A 消息路由包：
+  - **`mention-parser.ts`**：`@mention` 解析器
+    - 支持英文 ID（`@leo` / `@andre` / `@flash` / `@wall`）
+    - 支持中文别名（`@里奥` / `@安德` / `@弗拉什` / `@沃尔`）
+    - 支持位置别名（`@队长` / `@中场` / `@前锋` / `@后卫`）
+    - 返回去重的球员 ID 列表 + 清理后的纯文本
+  - **`intent-inferrer.ts`**：意图推断器
+    - 关键词权重评分：每名球员 4 组关键词 × 权重（1-4）
+    - 置信度计算与阈值过滤（默认阈值 0.2）
+    - 无明确意图时回退到 Leo (#10 队长)
+    - 返回各球员得分（支持调试）
+  - **`thread-manager.ts`**：线程管理器
+    - 对应 `/new` / `/threads` / `/use <id>` / `/where` 斜杠指令
+    - 完整生命周期：create / get / list / setActive / archive
+    - 参与者追踪、消息计数自动递增
+  - **`index.ts`**：`MessageRouter` 核心路由类
+    - 三段路由逻辑：@mention → 意图推断 → 默认路由
+    - 自动构建完整 `Message` 对象（含 `MessageRouting`）
+    - 自动更新线程参与者和消息计数
+    - `routeToNewThread()` 快捷方法（一步创建线程 + 路由）
+
+---
+
 ## [0.5.0-alpha] - 2026-06-23
 
 > 🔷 类型系统赛季 — 从骨架到有血有肉的 TypeScript 工程！
