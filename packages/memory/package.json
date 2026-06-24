@@ -1,0 +1,36 @@
+{
+  "name": "@dream-xi/memory",
+  "version": "0.6.0-alpha",
+  "description": "Dream XI AI — Three-layer memory manager: working, episodic (Redis), and semantic (Markdown) memory with identity anchor anti-compression.",
+  "keywords": ["dream-xi", "memory", "agents", "redis", "typescript"],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test dist/**/*.test.js",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@dream-xi/types": "workspace:*"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  },
+  "peerDependencies": {
+    "redis": "^4.0.0"
+  },
+  "peerDependenciesMeta": {
+    "redis": {
+      "optional": true
+    }
+  }
+}

@@ -11,6 +11,35 @@
 
 ---
 
+## [0.7.0-alpha] - 2026-06-24
+
+> 🧠 传球赛季（第二节）— 三层记忆管理器上线！
+
+### Added
+
+- **`packages/memory/`** — `@dream-xi/memory` 三层记忆管理包：
+  - **`working-memory.ts`**：工作记忆管理器
+    - Token 消耗追踪（支持中英文混合估算）
+    - 85% 阈值自动触发压缩（保留最近 30% 条目）
+    - 身份锚定卡注入（每 N 条消息注入一次，防上下文压缩失忆）
+    - `buildContextMessages()`：构建含锚定卡的 LLM 请求消息列表
+    - `messageToWorkingEntry()`：`Message` → `WorkingMemoryEntry` 转换工具
+  - **`episodic-store.ts`**：情景记忆存储
+    - `EpisodicBackend` 接口：可插拔后端设计（Redis / 内存）
+    - `InMemoryEpisodicBackend`：内存后端（对应 `pnpm start --memory`）
+    - `EpisodicMemoryStore.save()`：保存线程摘要、关键决策、经验沉淀
+    - `EpisodicMemoryStore.query()`：重要性 × 时间衰减（半衰期 7 天）综合评分排序
+    - TTL 过期：默认 30 天（内存）/ 90 天（Redis）
+  - **`index.ts`**：`MemoryManager` 三层门面
+    - `processMessage()`：自动追加工作记忆，压缩时自动归档情景记忆
+    - `getContextMessages()`：返回含身份锚定的 LLM 上下文列表
+    - `buildMemoryContext()`：将历史记忆格式化为提示词前缀
+    - `createInMemoryManager()`：快速创建内存模式管理器
+    - `createRedisManager()`：快速创建 Redis 生产模式管理器
+    - `getStats()`：运行状态统计（活跃工作记忆数、Token 使用详情）
+
+---
+
 ## [0.6.0-alpha] - 2026-06-24
 
 > 🔀 传球赛季（第一节）— A2A 消息路由器上线！
