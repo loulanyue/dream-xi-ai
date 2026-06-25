@@ -11,6 +11,33 @@
 
 ---
 
+## [0.9.0-alpha] - 2026-06-25
+
+> 🛡️ 战术赛季（第二节）— 球队铁律守卫上线！
+
+### Added
+
+- **`packages/fair-play/`** — `@dream-xi/fair-play` 球队铁律守卫包：
+  - **`rules.ts`**：四条铁律完整定义（含名称、描述、严重等级、口号）
+    - `data-sanctuary`（数据圣殿，block）：「那是比赛记录，我们不清场。」
+    - `process-safety`（进程自保，block）：「教练站在那里，球队才能继续比赛。」
+    - `config-readonly`（配置只读，block）：「战术板上的方案，不能在比赛中途改写。」
+    - `port-boundary`（端口边界，warn）：「各守其位，不越位进攻。」
+  - **`action-checker.ts`**：操作意图检测引擎
+    - 7 种 `ActionType`：file-delete / file-write / command-execute / process-signal / network-request / db-operation / redis-operation
+    - 四条铁律各自的意图模式匹配（路径模式、命令关键词、正则）
+    - `checkAction()`：返回 `violations`（含 block/warn）和格式化 `rejectionMessage`
+  - **`index.ts`**：`FairPlayGuard` 主守卫类
+    - `check()`：检查并返回结果（不抛出）
+    - `enforce()`：违规时抛出 `FairPlayViolationError`
+    - `wrap()` / `wrapSync()`：包裹异步/同步操作（先检查再执行）
+    - `getAuditLog()` / `getViolationLog()` / `getBlockedLog()`：审计日志
+    - `getStats()`：检查次数、拦截次数、按铁律分类的违规统计
+    - `createStrictGuard()`：生产环境全规则守卫
+    - `createLenientGuard()`：开发/测试宽松守卫
+
+---
+
 ## [0.8.0-alpha] - 2026-06-25
 
 > 📋 战术赛季（第一节）— 战术框架上线！
