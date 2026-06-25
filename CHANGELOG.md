@@ -11,6 +11,34 @@
 
 ---
 
+## [0.8.0-alpha] - 2026-06-25
+
+> 📋 战术赛季（第一节）— 战术框架上线！
+
+### Added
+
+- **`packages/tactic/`** — `@dream-xi/tactic` 战术框架包：
+  - **`builtin-tactics.ts`**：8 种内置战术完整定义（含中英文系统提示注入）
+    - `tdd`：TDD 战术（红-绿-重构循环，禁止无测试提交）
+    - `code-review`：P1/P2/P3 分级审查清单（阻断合并 / 应修复 / 建议）
+    - `security-review`：OWASP Top 10 + Dream XI 球队铁律合规检查
+    - `architecture-design`：ADR 格式设计流程（边界→核心域→接口→权衡）
+    - `rapid-prototype`：快速原型（硬编码优先，30 分钟可演示）
+    - `debug-assist`：系统诊断（复现→隔离→假设→验证，禁止盲改代码）
+    - `tech-writing`：Dream XI 风格文档（足球隐喻+中英对照+可运行示例）
+    - `post-match-review`：结构化复盘模板，自动沉淀经验到情景记忆
+  - **`tactic-loader.ts`**：战术加载引擎
+    - `TacticRegistry`：战术注册表（register / search / getByCategory）
+    - `detectTriggers()`：关键词得分匹配，自动识别需加载的战术
+    - `PlayerTacticSlot`：球员战术槽
+      - 位置合法性验证（门将不能加载前锋战术）
+      - 冲突检测（`rapid-prototype` ↔ `tdd` 互斥）
+      - `buildSystemPrompt()`：基础角色提示 + 所有战术提示拼接
+      - `totalTokenOverhead`：已加载战术 Token 开销合计
+  - **`index.ts`**：`createDefaultRegistry()` 预装 8 种内置战术的注册表工厂
+
+---
+
 ## [0.7.0-alpha] - 2026-06-24
 
 > 🧠 传球赛季（第二节）— 三层记忆管理器上线！

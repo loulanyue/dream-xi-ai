@@ -1,0 +1,27 @@
+{
+  "name": "@dream-xi/tactic",
+  "version": "0.7.0-alpha",
+  "description": "Dream XI AI — Tactics Framework: on-demand skill loading, conflict detection, and system prompt injection for players.",
+  "keywords": ["dream-xi", "tactic", "skill", "agents", "typescript"],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@dream-xi/types": "workspace:*"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}
