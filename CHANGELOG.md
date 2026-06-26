@@ -11,6 +11,47 @@
 
 ---
 
+## [1.0.0-alpha] - 2026-06-25
+
+> 🎉 战术赛季（第三节）— 配置加载器上线，全队 Ready！
+
+### Added
+
+- **`packages/config/`** — `@dream-xi/config` 平台配置加载器包：
+  - **`env-reader.ts`**：类型安全的环境变量读取工具
+    - `readString()` / `requireString()`（缺失时抛出 `ConfigError`）
+    - `readInt()` / `readBool()` / `readList()` / `readIntList()`
+    - `ConfigError`：配置错误专用异常类
+  - **`validator.ts`**：配置完整性验证器
+    - 端口范围校验（1024-65535）
+    - JWT Secret 强度检查（≥32 字符，非默认值）
+    - Redis URL 格式验证
+    - 至少一名球员需配置 API Key
+    - MCP 端口冲突检测
+    - 飞书/GitHub 集成完整性校验
+    - `formatValidationReport()`：格式化启动日志（含上场/替补席球员列表）
+  - **`index.ts`**：`loadConfig()` 主加载函数
+    - 自动从 `process.env` 读取全部 40+ 环境变量
+    - 自动检测 Redis / 内存模式（有无 `REDIS_URL`）
+    - 按需注入集成配置（有 `FEISHU_APP_ID` 才注入飞书配置）
+    - `strict` 模式：验证失败时阻止服务启动
+    - `printReport` 选项：控制是否打印启动配置报告
+
+### 里程碑
+
+至此，`packages/` 目录已完成 6 个核心包：
+
+| 包 | 职责 |
+|----|------|
+| `@dream-xi/types` | 类型系统（类型定义） |
+| `@dream-xi/router` | A2A 消息路由 |
+| `@dream-xi/memory` | 三层记忆管理 |
+| `@dream-xi/tactic` | 战术框架 |
+| `@dream-xi/fair-play` | 球队铁律守卫 |
+| `@dream-xi/config` | 平台配置加载 |
+
+---
+
 ## [0.9.0-alpha] - 2026-06-25
 
 > 🛡️ 战术赛季（第二节）— 球队铁律守卫上线！
