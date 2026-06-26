@@ -11,6 +11,38 @@
 
 ---
 
+## [1.1.0-alpha] - 2026-06-26
+
+> 🌐 服务器赛季（第一节）— HTTP 服务骨架上线！
+
+### Added
+
+- **`packages/server/`** — `@dream-xi/server` HTTP 服务包（骨架）：
+  - **`types.ts`**：全量 API 类型定义
+    - `ApiResponse<T>` / `PaginatedResponse<T>` — 标准响应包装器
+    - `HealthCheckResponse` — 健康检查（含球员上场/替补席状态）
+    - `ChatRequest` / `ChatResponse` — 聊天 API（含路由方式、Token 统计、战术列表）
+    - `ThreadSummary` / `CreateThreadRequest` — 线程管理
+    - `PlayerStatusResponse` — 球员实时状态
+    - `MemoryQueryResponse` — 情景记忆查询
+    - `FairPlayStatsResponse` — 铁律守卫统计
+  - **`middleware/index.ts`**：HTTP 中间件层（纯 Node.js，无框架）
+    - `requestLogger`：请求日志（`match-{ts}-{rand}` 足球主题 requestId，状态色标 🟢🟡🔴）
+    - `corsMiddleware`：CORS 处理（allowedOrigins 白名单 + OPTIONS 预检）
+    - `parseJsonBody<T>()`：原生异步 JSON 请求体解析
+    - `sendJson()` / `sendError()`：标准响应构建工具
+  - **`routes/health.ts`**：`GET /health` / `GET /api/health`
+    - 返回 uptime、各子系统状态、球员上场/替补席列表
+  - **`routes/players.ts`**：`GET /api/players` / `GET /api/players/:id`
+    - 返回 PlayerStatusResponse（含编号、位置、provider、战术槽）
+  - **`src/index.ts`**：`createDreamXiServer()` 服务器工厂
+    - `ServerContext` 单例：共享 guard / memory / router / tacticRegistry
+    - 中间件链：requestLogger → corsMiddleware → 路由分发
+    - 全路由表（动态 import chat/threads/memory/fair-play 路由）
+    - 未处理错误捕获 → 500 标准响应
+
+---
+
 ## [1.0.0-alpha] - 2026-06-25
 
 > 🎉 战术赛季（第三节）— 配置加载器上线，全队 Ready！
