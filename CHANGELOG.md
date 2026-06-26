@@ -11,6 +11,41 @@
 
 ---
 
+## [1.4.0-alpha] - 2026-06-26
+
+> ⚡ 服务器赛季（第四节）— 战术 API · 服务器启动入口 · `dream-xi` CLI
+
+### Added
+
+- **`packages/server/src/routes/tactics.ts`**：战术查询 API（新增文件）
+  - `GET /api/tactics` — 列出所有可用战术（含分类过滤 `?category=`）
+  - `GET /api/tactics/search?q=` — 按关键词搜索战术名称/描述
+  - `GET /api/tactics/:id` — 获取单条战术完整详情（含 `systemPrompt`）
+  - `TacticSummary` 视图：列表页隐藏 `systemPrompt`，保护提示词安全
+- **`packages/server/src/main.ts`**：服务器真实启动入口（新增文件）
+  - CLI 参数支持：`--memory`（开启 in-memory 模式）、`--daemon`（守护进程模式）
+  - ASCII 横幅 + 端口/端点列表启动输出
+  - `loadConfig` 严格模式验证，配置错误提前退出
+  - `EADDRINUSE` 端口占用友好检测
+  - 优雅退出：`SIGTERM`/`SIGINT` 信号 + 10s 超时强制退出
+  - `uncaughtException`/`unhandledRejection` 安全兜底
+
+### Changed
+
+- **`packages/server/src/index.ts`**：接入战术路由分发
+  - `GET /api/tactics`、`GET /api/tactics/search`、`GET /api/tactics/:id` 进入路由表
+  - 移除 `handleChat` 处的过期注释
+- **`package.json`**（root）：版本 `0.3.0-alpha` → `1.4.0-alpha`
+  - `start` 脚本从 `index.js` 改为 `main.js`
+  - 新增 `start:memory` 脚本
+  - 移除废弃的 `stop` / `start:status` 脚本
+- **`packages/server/package.json`**：版本 `1.0.0-alpha` → `1.4.0-alpha`
+  - 新增 `./main` exports 入口
+  - 新增 `bin.dream-xi` 指向 `dist/main.js`（可全局安装为 CLI 工具）
+  - `dev` 脚本改为 `node --watch dist/main.js --memory`
+
+---
+
 ## [1.3.0-alpha] - 2026-06-26
 
 > 📚 服务器赛季（第三节）— 文档整合 · 架构全景图 · 开发者指南

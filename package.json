@@ -1,6 +1,6 @@
 {
   "name": "dream-xi-ai",
-  "version": "0.3.0-alpha",
+  "version": "1.3.0-alpha",
   "private": true,
   "description": "The platform layer that turns isolated AI agents into a World Cup-level dream team.",
   "keywords": [
@@ -29,11 +29,10 @@
   },
   "scripts": {
     "build": "pnpm -r build",
-    "start": "node packages/server/dist/index.js",
+    "start": "node packages/server/dist/main.js",
+    "start:memory": "node packages/server/dist/main.js --memory",
     "start:dev": "pnpm -r --parallel dev",
-    "start:daemon": "node packages/server/dist/index.js --daemon",
-    "stop": "node packages/server/dist/cli.js stop",
-    "start:status": "node packages/server/dist/cli.js status",
+    "start:daemon": "node packages/server/dist/main.js --daemon",
     "test": "pnpm -r test",
     "test:watch": "pnpm -r test --watch",
     "lint": "biome check .",

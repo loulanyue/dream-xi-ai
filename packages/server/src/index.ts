@@ -91,9 +91,22 @@ async function dispatch(
     return;
   }
 
+  // ── 战术 API ───────────────────────────────────────────────────────────────
+  if ((path === "/api/tactics" || path === "/api/tactics/search") && method === "GET") {
+    const { handleGetTactics } = await import("./routes/tactics.js");
+    handleGetTactics(req, res, ctx, rid);
+    return;
+  }
+
+  const tacticMatch = path.match(/^\/api\/tactics\/([^/]+)$/);
+  if (tacticMatch !== null && method === "GET") {
+    const { handleGetTactic } = await import("./routes/tactics.js");
+    handleGetTactic(req, res, ctx, tacticMatch[1] ?? "", rid);
+    return;
+  }
+
   // ── 聊天 API（POST /api/chat）──────────────────────────────────────────────
   if (path === "/api/chat" && method === "POST") {
-    // 动态导入避免循环依赖，chat 路由在下一个提交中添加
     const { handleChat } = await import("./routes/chat.js");
     await handleChat(req, res, ctx, rid);
     return;
