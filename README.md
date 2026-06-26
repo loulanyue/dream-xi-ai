@@ -117,26 +117,47 @@ These aren't red cards imposed on us. They're Fair Play agreements we keep.
 
 ## Architecture
 
-```
-┌──────────────────────────────────────────────────┐
-│              You (Head Coach / 主教练)             │
-│          Vision · Tactics · Final Whistle         │
-└──────────────────────┬───────────────────────────┘
-                       │
-┌──────────────────────▼───────────────────────────┐
-│            Dream XI Platform Layer               │
-│                                                  │
-│   Identity    A2A Router    Tactics Framework    │
-│   Manager     & Threads     & Playbook           │
-│                                                  │
-│   Memory &    Match         MCP Callback         │
-│   Replay      Discipline    Bridge               │
-└────┬─────────────┬──────────────┬───────────┬────┘
-     │             │              │           │
-┌────▼───┐   ┌────▼─────┐   ┌───▼────┐   ┌──▼──────────┐
-│ Claude │   │ GPT /    │   │ Gemini │   │  opencode   │
-│ #10    │   │ Codex #8 │   │ #9     │   │  #4         │
-└────────┘   └──────────┘   └────────┘   └─────────────┘
+```mermaid
+graph TD
+    Coach["🧑‍💼 Head Coach\n主教练"] --> Server
+
+    subgraph Server["@dream-xi/server — HTTP Layer"]
+        Health["GET /health"]
+        Chat["POST /api/chat"]
+        Threads["GET/POST /api/threads"]
+        Memory_API["GET /api/memory/:id"]
+        FP_API["GET /api/fair-play/stats"]
+    end
+
+    Server --> Router
+    Server --> Memory
+    Server --> Tactic
+    Server --> FairPlay
+    Server --> Config
+
+    subgraph Platform["Platform Packages"]
+        Router["@dream-xi/router\nA2A Routing + Threads"]
+        Memory["@dream-xi/memory\nWorking + Episodic"]
+        Tactic["@dream-xi/tactic\n8 Built-in Tactics"]
+        FairPlay["@dream-xi/fair-play\nFair Play Guard"]
+        Config["@dream-xi/config\nEnv Loader + Validator"]
+    end
+
+    Router --> Types
+    Memory --> Types
+    Tactic --> Types
+    FairPlay --> Types
+    Config --> Types
+    Types["@dream-xi/types\nCore TypeScript Types"]
+
+    subgraph Agents["AI Agents"]
+        Leo["⚽ Leo #10\nClaude (Anthropic)"]
+        Andre["⚙️ André #8\nGPT / Codex (OpenAI)"]
+        Flash["⚡ Flash #9\nGemini (Google)"]
+        Wall["🧱 Wall #4\nopencode"]
+    end
+
+    Server -.->|"routes messages to"| Agents
 ```
 
 **Three-layer principle:**
@@ -336,11 +357,13 @@ No. Dream XI is built from scratch with a football-inspired architecture. It int
 ## Learn More
 
 - **[SETUP.md](SETUP.md)** — Full installation and configuration guide
+- **[docs/DEVELOPMENT.md](docs/DEVELOPMENT.md)** — Developer guide: quickstart, API reference, dev workflow
 - **[docs/TIPS.md](docs/TIPS.md)** — Match tips, @mentions, voice companion
 - **[docs/VISION.md](docs/VISION.md)** — Our vision and philosophy
 - **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — Architecture Decision Records (ADRs)
 - **[docs/GLOSSARY.md](docs/GLOSSARY.md)** — Football metaphor ↔ technical concept reference
 - **[docs/](docs/)** — Architecture decisions, feature specs, and lessons learned
+
 
 ## Contributing
 

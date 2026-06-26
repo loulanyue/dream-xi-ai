@@ -11,6 +11,34 @@
 
 ---
 
+## [1.3.0-alpha] - 2026-06-26
+
+> 📚 服务器赛季（第三节）— 文档整合 · 架构全景图 · 开发者指南
+
+### Added
+
+- **`docs/DEVELOPMENT.md`**：完整开发者指南（新增文件）
+  - 5 分钟快速启动（克隆 → 配置 → 启动 → curl 验证）
+  - 代码库结构说明（packages/ 目录树 + 每个文件职责）
+  - 包依赖关系图（types 为基础层，server 依赖全部平台包）
+  - API 端点速查（含 curl 示例 + 响应字段说明表）
+  - 本地开发工作流（单包 build + `pnpm gate` 门禁检查）
+  - 测试策略（单元测试 / 集成测试规划，含代码示例）
+  - 调试技巧（路由方式判断、铁律拦截定位、记忆压缩触发条件）
+  - 贡献流程速查（fork → branch → gate → PR）
+
+### Changed
+
+- **`README.md`** — Architecture 节升级：
+  - ASCII 图 → **Mermaid 全景图**（含 Server / Platform / Agents 三层子图，节点带 emoji）
+  - Learn More 区块新增 `docs/DEVELOPMENT.md` 链接
+- **`docs/ROADMAP.md`** — 路线图更新：
+  - 新增 **v1.2.0-alpha 里程碑完成记录**（7 包 × 11 端点全表）
+  - 核心平台表新增「TypeScript 工程骨架」和「HTTP 服务层」✅ 条目
+  - 下赛季目标升级为 v2.0.0-alpha，新增 P0 项：真实 LLM 接入 + 语义记忆层
+
+---
+
 ## [1.2.0-alpha] - 2026-06-26
 
 > 🌐 服务器赛季（第二节）— 全量 API 路由上线！
