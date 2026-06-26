@@ -11,6 +11,37 @@
 
 ---
 
+## [1.2.0-alpha] - 2026-06-26
+
+> 🌐 服务器赛季（第二节）— 全量 API 路由上线！
+
+### Added
+
+- **`packages/server/src/routes/`** — 完整 API 路由层：
+  - **`chat.ts`** — `POST /api/chat` 完整聊天流水线（10 步）：
+    1. JSON 请求体解析
+    2. Fair Play 铁律守卫检查（403 拒绝违规请求）
+    3. 自动创建/复用线程（`threadId` 可选）
+    4. A2A 路由（@mention / 意图推断 / 强制 `playerId`）
+    5. 情景记忆查询（最近 3 条，注入上下文）
+    6. 战术关键词自动检测并加载（最多 2 个）
+    7. 系统提示组装（身份 + 记忆上下文 + 战术提示）
+    8. Stub 球员回复（含 LLM 接入 TODO 标记，v1.x 完成）
+    9. 追加消息到工作记忆，检测是否触发压缩
+    10. 返回 `ChatResponse`（handledBy / routeMethod / tokenUsage / loadedTactics）
+  - **`threads.ts`** — 线程管理 API：
+    - `GET /api/threads` — 按更新时间倒序列出所有线程
+    - `POST /api/threads` — 创建新线程并自动设为活跃
+    - `POST /api/threads/:id/archive` — 归档线程，自动为所有参与球员保存情景记忆摘要
+  - **`memory.ts`** — `GET /api/memory/:playerId`
+    - 支持 `?limit=N&minImportance=0.3` 查询参数
+    - 返回情景记忆列表（摘要 / 关键决策 / 重要性 / 标签）
+  - **`fair-play.ts`** — `GET /api/fair-play/stats`
+    - 返回守卫统计（总检查 / 拦截 / 警告 / 放行 / 按铁律分类）
+    - 最近 10 条违规记录（时间 / 球员 / 操作类型 / 目标 / 规则 / 严重等级）
+
+---
+
 ## [1.1.0-alpha] - 2026-06-26
 
 > 🌐 服务器赛季（第一节）— HTTP 服务骨架上线！
