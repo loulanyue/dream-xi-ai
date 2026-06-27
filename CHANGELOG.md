@@ -11,6 +11,38 @@
 
 ---
 
+## [1.4.5-alpha] - 2026-06-27
+
+> 🪵 基础设施赛季 — `@dream-xi/logger` · 结构化日志 · JSON Lines · 零依赖
+
+### Added
+
+- **`packages/logger/`**：结构化日志包（新建包，零外部依赖）
+  - `packages/logger/src/index.ts`：`Logger` 类完整实现
+    - **6 个日志级别**：`trace(10)` / `debug(20)` / `info(30)` / `warn(40)` / `error(50)` / `fatal(60)`
+    - **双输出格式**：
+      - `"json"`：紧凑 JSON Lines（生产推荐，机器可解析）
+      - `"pretty"`：带颜色 + 时间戳的可读格式（开发推荐，自动检测 `NODE_ENV`）
+      - `"silent"`：无输出（测试专用）
+    - **方法重载**：`log.info("msg")` 或 `log.info({ field }, "msg")` 两种签名
+    - **`child(bindings)`**：创建子 Logger，继承父配置 + 追加固定字段
+    - **`isLevelEnabled(level)`**：跳过昂贵参数计算的守卫方法
+    - **Error 序列化**：`err` 字段自动序列化为 `{ type, message, stack, code }`
+    - **流可替换**：`stdout` / `stderr` 可注入任意 `Writable`（测试友好）
+    - `createLogger(options)`：工厂函数，自动按 `NODE_ENV` 选择格式和级别
+    - `logRequest(logger, entry)`：HTTP 请求日志工具函数（按状态码选级别）
+    - `getRootLogger()`：全局根 Logger 单例
+    - `setRootLogger(logger)`：替换根 Logger（初始化/测试用）
+  - `packages/logger/package.json`：包配置（**零 runtime 依赖**）
+  - `packages/logger/tsconfig.json`：TypeScript 编译配置
+
+### Notes
+
+- `@dream-xi/logger` 不依赖 `@dream-xi/types`，可作为最底层基础包被任意包引用
+- `pretty` 格式使用 ANSI 转义码，终端不支持颜色时建议设置 `format: "json"`
+
+---
+
 ## [1.5.0-alpha] - 2026-06-29
 
 > 📡 事件总线赛季 — `@dream-xi/event-bus` · InMemoryEventBus · eventFactory
