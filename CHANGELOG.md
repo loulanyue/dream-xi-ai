@@ -11,6 +11,43 @@
 
 ---
 
+## [1.5.0-alpha] - 2026-06-29
+
+> 📡 事件总线赛季 — `@dream-xi/event-bus` · InMemoryEventBus · eventFactory
+
+### Added
+
+- **`packages/event-bus/`**：事件总线实现包（新建包）
+  - `packages/event-bus/src/index.ts`：`InMemoryEventBus` 完整实现
+    - `emit(event)`：异步并发通知所有匹配订阅者，单个失败不中断其他订阅者
+    - `subscribe(filter, handler)`：返回可取消 `EventSubscription` 令牌
+    - `once(filter, handler)`：一次性订阅，触发后自动注销
+    - `waitFor(type, timeoutMs?)`：Promise 风格等待事件，支持超时 reject
+    - `subscriberCount()`：当前活跃订阅者数量（调试用）
+    - `clear()`：清除所有订阅者（测试清理用）
+    - `snapshot()`：返回所有订阅者快照（id / types / once / createdAt）
+    - `totalEmitted`：总发布事件次数统计
+    - `createEventBus(options?)`：工厂函数，支持 `debug` / `handlerTimeoutMs` / `maxSubscribers` 配置
+    - `getGlobalEventBus()`：进程级单例（开发环境自动开启 debug）
+    - `resetGlobalEventBus()`：单例重置（测试专用）
+  - `packages/event-bus/src/factory.ts`：`eventFactory` 类型安全工厂
+    - 覆盖全部 20 种平台事件，自动填充 `id` / `timestamp` / `version`
+    - 调用者只需传入业务 `payload`，无需手动构造基础字段
+  - `packages/event-bus/package.json`：包配置（依赖 `@dream-xi/types workspace:*`）
+  - `packages/event-bus/tsconfig.json`：TypeScript 编译配置
+
+### Architecture
+
+```
+@dream-xi/types          ← 事件类型定义（接口层）
+       ↑
+@dream-xi/event-bus      ← 事件总线实现（本次新增）
+       ↑
+@dream-xi/server         ← 在 main.ts 中集成事件发布
+```
+
+---
+
 ## [0.2.0-alpha] - 2026-06-20
 
 > 🔌 基础设施赛季（第零节）— 事件系统类型 · 平台事件总线接口
