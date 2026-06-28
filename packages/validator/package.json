@@ -1,0 +1,24 @@
+{
+  "name": "@dream-xi/validator",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — Lightweight request validation: schema-based field checks, type coercion, and error formatting. Zero dependencies.",
+  "keywords": ["dream-xi", "validator", "validation", "schema", "typescript"],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}

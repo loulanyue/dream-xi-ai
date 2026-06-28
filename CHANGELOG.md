@@ -11,6 +11,52 @@
 
 ---
 
+## [1.4.8-alpha] - 2026-06-28
+
+> 🛡️ 基础设施赛季 — `@dream-xi/validator` · Schema 驱动校验 · 类型推断 · 内置 API Schema
+
+### Added
+
+- **`packages/validator/`**：轻量级请求验证包（新建包，零外部依赖）
+  - `packages/validator/src/index.ts`：完整校验器实现
+    - **`StringSchema`**：字符串校验
+      - `.minLength(n)` / `.maxLength(n)`：长度范围限制
+      - `.pattern(re, msg?)`：正则匹配校验
+      - `.oneOf(values)`：枚举值限制
+      - `.trim()`：自动去除首尾空白
+    - **`NumberSchema`**：数字校验
+      - `.min(n)` / `.max(n)`：数值范围限制
+      - `.integer()`：限制为整数
+    - **`BooleanSchema`**：布尔值校验
+    - **`ArraySchema<T>`**：数组校验
+      - `.minItems(n)` / `.maxItems(n)`：元素数量限制
+      - 递归校验每个数组元素（支持嵌套 Schema）
+    - **`ObjectSchema<S>`**：对象校验
+      - 按 Shape 声明逐字段校验
+      - `.allowUnknownFields()`：可选允许额外字段
+      - 递归支持嵌套对象
+    - **所有 Schema** 共有：`.optional()`（可选字段）、`.label(name)`（错误消息字段名）
+    - **`v` 构建器**：`v.string()` / `v.number()` / `v.boolean()` / `v.array()` / `v.object()` 流式 API
+    - **`validate(schema, value)`**：顶层校验函数，返回 `ValidationResult<T>`（discriminated union）
+    - **`ValidationError`**：`{ path, message, received }` 精确字段错误定位
+    - **类型推断**：`ObjectSchema<S>` 自动推断 `InferShape<S>` TypeScript 类型
+    - **内置平台 Schema**：
+      - `ChatRequestSchema`：`POST /api/chat` 请求体（含嵌套 `options`）
+      - `CreateThreadSchema`：`POST /api/threads` 请求体
+      - `WriteMemorySchema`：`POST /api/memory` 写入请求体
+      - `SearchMemorySchema`：`GET /api/memory/search` 查询参数
+    - **`formatValidationErrors(errors)`**：将错误列表格式化为 HTTP 响应 `details` 字段
+
+### Architecture
+
+```
+@dream-xi/validator (no deps) ← 校验层，与类型系统解耦
+       ↑
+@dream-xi/server               ← API 路由中直接调用 validate()
+```
+
+---
+
 ## [1.4.5-alpha] - 2026-06-27
 
 > 🪵 基础设施赛季 — `@dream-xi/logger` · 结构化日志 · JSON Lines · 零依赖
