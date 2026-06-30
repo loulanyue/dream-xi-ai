@@ -11,6 +11,54 @@
 
 ---
 
+## [1.6.0-alpha] - 2026-06-30
+
+> 🔄 可靠性赛季 — `@dream-xi/retry` · 指数退避 · Full Jitter · 断路器 · 零依赖
+
+### Added
+
+- **`packages/retry/`**：生产级重试工具包（新建包，零外部依赖）
+  - `packages/retry/src/index.ts`：完整重试 + 断路器实现
+    - **`withRetry(fn, options)`**：核心重试函数
+      - `maxAttempts`：最大尝试次数（含首次，默认 3）
+      - `baseDelayMs` / `maxDelayMs`：基础/最大等待时间
+      - `strategy`：退避策略（`"exponential"` | `"linear"` | `"fixed"`）
+      - `factor`：指数退避倍数（默认 2）
+      - `jitter: true`：Full Jitter 随机化，彻底消除惊群效应
+      - `isRetryable(err)`：自定义可重试判断，返回 false 立即抛出
+      - `onRetry / onSuccess / onExhausted`：完整生命周期回调
+      - `signal: AbortSignal`：外部取消支持，等待期间可中断
+      - `timeoutMs`：单次操作超时，超时自动触发重试
+    - **`RetryExhaustedError`**：全部次数耗尽后抛出（含 `cause`、`attempts`、`elapsedMs`）
+    - **`RetryCancelledError`**：AbortSignal 触发取消时抛出
+    - **`RetryTimeoutError`**：单次操作超时时抛出（可重试错误）
+    - **`isRetryable(error)`**：智能错误分类
+      - HTTP 状态码：408 / 429 / 500 / 502 / 503 / 504 可重试
+      - Node.js errno：`ECONNRESET` / `ECONNREFUSED` / `ETIMEDOUT` 等可重试
+      - 消息关键词兜底：timeout / rate limit / service unavailable 等
+    - **`CircuitBreaker`**：断路器
+      - 三态：`closed`（正常）→ `open`（熔断）→ `half-open`（探测恢复）
+      - `failureThreshold`：连续失败多少次后熔断（默认 5）
+      - `recoveryTimeMs`：熔断恢复等待时间（默认 60s）
+      - `successThreshold`：半开状态连续成功多少次后关闭（默认 2）
+      - `onStateChange`：状态变更回调（用于告警/监控）
+      - `breaker.execute(fn)`：执行操作，断路器打开时直接拒绝
+      - `breaker.reset()`：手动重置为关闭状态
+    - **预设配置**：
+      - `LLM_RETRY_OPTIONS`：LLM API 调用（4 次 / 1s 起始 / 20s 上限 / 60s 超时）
+      - `INFRA_RETRY_OPTIONS`：内部基础设施调用（3 次 / 200ms 起始 / 5s 上限）
+      - `LLM_CIRCUIT_BREAKER_OPTIONS`：LLM 断路器（5 次失败熔断 / 30s 恢复）
+
+### Architecture
+
+```
+@dream-xi/retry (no deps)   ← 可靠性层，零依赖
+       ↑
+@dream-xi/server             ← LLM 调用时使用 withRetry + CircuitBreaker
+```
+
+---
+
 ## [1.4.8-alpha] - 2026-06-28
 
 > 🛡️ 基础设施赛季 — `@dream-xi/validator` · Schema 驱动校验 · 类型推断 · 内置 API Schema
