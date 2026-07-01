@@ -1,6 +1,6 @@
 {
   "name": "dream-xi-ai",
-  "version": "1.3.0-alpha",
+  "version": "1.8.0-alpha",
   "private": true,
   "description": "The platform layer that turns isolated AI agents into a World Cup-level dream team.",
   "keywords": [
@@ -41,7 +41,9 @@
     "typecheck": "pnpm -r typecheck",
     "gate": "pnpm run typecheck && pnpm run lint && pnpm run test && pnpm run build",
     "clean": "pnpm -r clean && rimraf node_modules",
-    "prepare": "node scripts/prepare.js"
+    "prepare": "node scripts/prepare.js",
+    "check:packages": "node scripts/check-packages.mjs",
+    "pkg:new": "node scripts/check-packages.mjs --fix"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.0",

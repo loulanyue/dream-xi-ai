@@ -11,6 +11,30 @@
 
 ---
 
+## [1.8.1-alpha] - 2026-07-01
+
+> 🔧 工程化赛季 — `check-packages` 健康检查 · 新包接入指南 · 根脚本补全
+
+### Added
+
+- **`scripts/check-packages.mjs`**：包健康检查工具（新增脚本）
+  - 扫描 `packages/*` 所有包，逐一验证：必填字段（name/version/description/license）、semver 格式、`workspace:*` 内部依赖协议、`tsconfig.json` 存在、`src/index.ts` 存在、`Apache-2.0` 协议
+  - 彩色输出：✓ 通过 / ⚠ 警告 / ✗ 错误
+  - 汇总报告 + 非零退出码（CI 友好）
+  - `--fix` 模式预留（未来自动修复）
+
+### Changed
+
+- **`package.json`**（root）：版本 `1.3.0-alpha` → `1.8.0-alpha`
+  - 新增 `check:packages` 脚本：`node scripts/check-packages.mjs`
+  - 新增 `pkg:new` 脚本（未来新包自动脚手架）
+- **`CONTRIBUTING.md`**：新增"新增包指南（上场新球员）"章节
+  - 完整 5 步流程：目录创建 → package.json → tsconfig.json → src/index.ts → `pnpm check:packages`
+  - 明确 `workspace:*` 协议要求
+  - 资源链接补充 `docs/DEVELOPMENT.md`
+
+---
+
 ## [1.8.0-alpha] - 2026-07-01
 
 > 💾 可靠性赛季 — `@dream-xi/cache` · LRU 淘汰 · TTL 过期 · `getOrSet` 原子操作

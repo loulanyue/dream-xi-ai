@@ -161,9 +161,72 @@ pnpm --filter @dream-xi/web dev
 
 ---
 
+## 新增包指南（上场新球员）
+
+> 适合希望向 monorepo 中添加新 `packages/` 包的贡献者。
+
+### 步骤
+
+1. **创建包目录结构**
+
+   ```bash
+   mkdir -p packages/my-package/src
+   ```
+
+2. **创建 `package.json`**（参考已有包，如 `packages/logger/package.json`）
+
+   ```json
+   {
+     "name": "@dream-xi/my-package",
+     "version": "0.1.0-alpha",
+     "description": "...",
+     "license": "Apache-2.0",
+     "main": "./dist/index.js",
+     "types": "./dist/index.d.ts",
+     "exports": {
+       ".": { "import": "./dist/index.js", "types": "./dist/index.d.ts" }
+     },
+     "scripts": {
+       "build": "tsc --project tsconfig.json",
+       "typecheck": "tsc --noEmit",
+       "clean": "rimraf dist"
+     },
+     "devDependencies": { "rimraf": "^5.0.0", "typescript": "^5.6.0" }
+   }
+   ```
+
+   > [!IMPORTANT]
+   > 所有内部 `@dream-xi/*` 依赖必须使用 `"workspace:*"` 版本协议。
+
+3. **创建 `tsconfig.json`**（继承根配置）
+
+   ```json
+   {
+     "extends": "../../tsconfig.json",
+     "compilerOptions": { "rootDir": "src", "outDir": "dist" },
+     "include": ["src/**/*"],
+     "exclude": ["node_modules", "dist"]
+   }
+   ```
+
+4. **编写 `src/index.ts`**（包入口）
+
+5. **运行包健康检查**
+
+   ```bash
+   pnpm check:packages
+   ```
+
+   检查项包括：必填字段、semver 格式、`workspace:*` 依赖、`tsconfig.json`、`src/index.ts`、`Apache-2.0` 协议。
+
+6. **更新 `CHANGELOG.md`**，记录新包的功能说明。
+
+---
+
 ## 资源
 
 - [快速开始](SETUP.md)
+- [开发者指南](docs/DEVELOPMENT.md)
 - [赛场锦囊](docs/TIPS.md)
 - [战术纪律手册](docs/SOP.md)
 - [安全政策](SECURITY.md)
