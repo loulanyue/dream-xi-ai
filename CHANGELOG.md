@@ -11,6 +11,28 @@
 
 ---
 
+## [1.8.0-alpha] - 2026-07-01
+
+> 💾 可靠性赛季 — `@dream-xi/cache` · LRU 淘汰 · TTL 过期 · `getOrSet` 原子操作
+
+### Added
+
+- **`packages/cache/`**：内存缓存包（新建包，零外部依赖）
+  - **`Cache<V>`**：泛型类型安全缓存类
+    - `get(key)`：读取，过期自动删除并返回 `undefined`
+    - `set(key, value, ttlMs?)`：写入，支持独立 TTL
+    - `getOrSet(key, loader, ttlMs?)`：SWR 风格原子操作，防止缓存穿透
+    - `has(key)`：存在检查（不更新 LRU 顺序）
+    - `delete(key)` / `clear()` / `keys()`
+    - `stats()`：命中率、miss 次数、LRU/TTL 淘汰统计
+  - **LRU 淘汰**：容量满时自动移除最久未访问的 key
+  - **TTL 过期**：每个 key 可设独立 TTL，定时清理 + 惰性过期双重机制
+  - **事件回调**：`onEvict`（LRU 淘汰）/ `onExpire`（TTL 过期）/ `onSet` / `onGet`
+  - **`createCache<V>(options?)`**：工厂函数
+  - **预设实例**：`tacticCache`（200条/10min）、`playerCache`（50条/30min）、`llmResponseCache`（1000条/5min）
+
+---
+
 ## [1.7.0-alpha] - 2026-07-01
 
 > 🚦 可靠性赛季 — `@dream-xi/rate-limiter` · 令牌桶 · 滑动窗口 · HTTP 标准头
