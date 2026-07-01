@@ -11,6 +11,27 @@
 
 ---
 
+## [1.7.0-alpha] - 2026-07-01
+
+> 🚦 可靠性赛季 — `@dream-xi/rate-limiter` · 令牌桶 · 滑动窗口 · HTTP 标准头
+
+### Added
+
+- **`packages/rate-limiter/`**：API 速率限制器（新建包，零外部依赖）
+  - **`TokenBucketLimiter`**：令牌桶算法
+    - `tokensPerSecond`：每秒补充令牌数；`bucketSize`：最大突发容量
+    - `consume(key, cost?)`：消耗令牌，返回 `RateLimitResult`
+    - 自动按时间补充令牌，支持短时突发（适合 LLM 调用）
+  - **`SlidingWindowLimiter`**：滑动窗口算法
+    - `windowMs`：时间窗口大小；`maxRequests`：窗口内最大请求数
+    - `check(key)`：精确计数，移除窗口外时间戳
+    - 适合 REST API 端点频率控制
+  - **`toRateLimitHeaders(result)`**：生成标准 `RateLimit-*` + `Retry-After` HTTP 响应头
+  - **自动清理**：定时回收超时不活跃 key，防止内存泄漏
+  - **预设限制器**：`chatRateLimiter`（60s/20次）、`llmTokenBucket`（1 rps/突发 3）、`healthRateLimiter`（60s/60次）
+
+---
+
 ## [1.6.0-alpha] - 2026-06-30
 
 > 🔄 可靠性赛季 — `@dream-xi/retry` · 指数退避 · Full Jitter · 断路器 · 零依赖
