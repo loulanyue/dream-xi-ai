@@ -11,6 +11,39 @@
 
 ---
 
+## [1.9.1-alpha] - 2026-07-02
+
+> 📋 可靠性赛季 — `@dream-xi/queue` · 并发控制 · 优先级调度 · 延迟执行 · 任务重试
+
+### Added
+
+- **`packages/queue/`**：进程内任务队列（新建包，零外部依赖）
+  - **`TaskQueue<T>`**：泛型任务队列类
+    - `add(fn, options?)`：加入队列，返回 `Promise<TaskResult<T>>`
+    - `priority`（数字越大越先执行）+ `delayMs`（延迟多少毫秒后才允许取出）
+    - `maxRetries` + `baseRetryDelayMs`：独立重试配置，指数退避（delay = base × 2^attempt）
+    - `signal: AbortSignal`：任务在排队/等待/重试期间均可取消
+    - `pause() / resume()`：暂停/恢复调度（不影响已在执行的任务）
+    - `clear()`：清空等待队列，所有未执行任务 reject
+    - `stats()`：`{ pending, running, totalCompleted, totalFailed, totalCancelled }`
+    - `idle` getter：队列空且无运行任务时为 true
+  - **`QueueCallbacks<T>`**：`onStart / onSuccess / onFail / onDrain` 全链路回调
+  - **`TaskResult<T>`**：`{ value, durationMs, attempts }` 成功结果
+  - **`createQueue<T>(options?)`**：工厂函数
+  - **预设队列**：
+    - `llmQueue`：并发 3，默认重试 2 次，内置失败日志，适合 LLM API 批量调用
+    - `analysisQueue`：并发 1 串行，适合报告生成等后台独占任务
+
+### Architecture
+
+```
+@dream-xi/queue (no deps)   ← 任务调度层
+       ↑
+@dream-xi/server             ← 将 LLM 调用 dispatch 到 llmQueue
+```
+
+---
+
 ## [1.9.0-alpha] - 2026-07-03
 
 > 🏥 可靠性赛季 — `@dream-xi/health` · Liveness · Readiness · Startup Probe · K8s 标准
