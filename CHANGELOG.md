@@ -11,6 +11,41 @@
 
 ---
 
+## [1.9.0-alpha] - 2026-07-03
+
+> 🏥 可靠性赛季 — `@dream-xi/health` · Liveness · Readiness · Startup Probe · K8s 标准
+
+### Added
+
+- **`packages/health/`**：深度健康检查系统（新建包，零外部依赖）
+  - **`HealthRegistry`**：检查器注册中心
+    - `register(config)`：注册自定义检查器（支持多探针绑定）
+    - `registerMemoryCheck(options?)`：内置 Node.js heap 内存检查（阈值可配）
+    - `registerStartupCheck(options?)`：内置启动就绪检查（最短运行时间可配）
+    - `runLiveness()` → K8s liveness probe（失败触发容器重启）
+    - `runReadiness()` → K8s readiness probe（失败从负载均衡摘除）
+    - `runStartup()` → K8s startup probe（初始化期间保护 liveness）
+  - **检查器重要级别**（`criticality`）：
+    - `"critical"` → 失败整体 `unhealthy`（HTTP 503）
+    - `"degraded"` → 失败整体 `degraded`（HTTP 200 + 告警）
+    - `"optional"` → 失败仅记录，不影响状态
+  - **并行执行 + 独立超时**：所有检查器并发运行，每个最多等待 `timeoutMs`（默认 5s）
+  - **`HealthReport`**：结构化 JSON 报告，含 `status`、`checks[]`、`uptimeSeconds`、`memory` 快照
+  - **`createHealthHandlers(registry)`**：HTTP 路由适配器
+    - `handleLive` / `handleReady` / `handleStartup` → 直接挂载到 Node.js HTTP 服务器
+    - 状态码映射：`unhealthy` → 503，其他 → 200
+  - **`createDreamXiRegistry(options)`**：Dream XI 预配置工厂（内存检查 + 启动检查开箱即用）
+
+### Architecture
+
+```
+@dream-xi/health (no deps)
+       ↑
+@dream-xi/server  ←  GET /health/live  /health/ready  /health/startup
+```
+
+---
+
 ## [1.8.1-alpha] - 2026-07-01
 
 > 🔧 工程化赛季 — `check-packages` 健康检查 · 新包接入指南 · 根脚本补全
