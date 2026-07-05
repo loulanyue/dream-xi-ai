@@ -11,6 +11,41 @@
 
 ---
 
+## [2.0.0-alpha] - 2026-07-05
+
+> 📡 通信赛季 — `@dream-xi/pubsub` · 通配符 Pub/Sub · 类型安全 · 异步派发 · Retain 消息
+
+### Added
+
+- **`packages/pubsub/`**：进程内发布/订阅消息总线（新建包，零外部依赖）
+  - **`PubSub<TMap>`**：泛型类型安全消息总线类
+    - `subscribe(pattern, callback, options?)`：订阅 topic，返回 `Unsubscribe` 函数
+      - 支持通配符：`match.*`（匹配单段）/ `**`（匹配任意多段）
+      - `filter?: (payload) => boolean`：订阅级别过滤谓词
+      - `once?: true`：一次性监听，收到第一条消息后自动取消
+      - `receiveRetained?: false`：是否立即接收历史 retain 消息
+    - `once(pattern, callback, options?)`：一次性监听快捷方式
+    - `publish(topic, payload, retain?)`：**异步**派发，`Promise.allSettled` 并行调用所有匹配订阅者
+    - `publishSync(topic, payload, retain?)`：**同步**串行派发，适合测试
+    - `clearSubscriptions()` / `clearRetained(topic)` / `clearAllRetained()`
+    - `subscriberCount` / `retainedCount` getter
+  - **通配符路由**：`*` → 单段（`[^.]+`）；`**` → 多段（`.+`），编译为 RegExp
+  - **错误隔离**：`catchErrors: true`（默认），单个订阅者异常不影响其他订阅者
+  - **`onError` 回调**：异常统一上报
+  - **`createPubSub<TMap>(options?)`**：工厂函数
+  - **`dreamXiBus`**：全局单例，绑定 `DreamXiTopics` 类型映射
+    - 覆盖 12 类核心事件：match / player / tactic / llm / system
+
+### Architecture
+
+```
+@dream-xi/pubsub (no deps)   ← 松耦合通信层
+       ↑            ↑
+@dream-xi/server   @dream-xi/health  ← 各模块通过 dreamXiBus 解耦通信
+```
+
+---
+
 ## [1.9.1-alpha] - 2026-07-02
 
 > 📋 可靠性赛季 — `@dream-xi/queue` · 并发控制 · 优先级调度 · 延迟执行 · 任务重试
