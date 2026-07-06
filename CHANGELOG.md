@@ -11,6 +11,21 @@
 
 ---
 
+## [2.4.0-alpha] - 2026-07-06
+
+> 🤖 智能体基础赛季 — `@dream-xi/agent` · 身份标识管理 · 状态跟踪 · 思考循环 · 全局总线联动
+
+### Added
+
+- **`packages/agent/`**：基础 Agent 模型实现（新建包，依赖 context 与 pubsub）
+  - **`Agent`**：核心抽象基类，用于承载 Agent 的主要生命周期。
+    - `name` / `role` / `context`（ContextWindow 实例）属性绑定。
+    - `think(prompt, llmCall)`：思考与决策执行循环。触发开始、成功或失败事件派发。
+    - `reset()`：恢复/重置上下文状态至 idle。
+    - `state` getter：跟踪 `idle` / `thinking` / `executing` / `error` 智能体状态。
+
+---
+
 ## [2.3.0-alpha] - 2026-07-06
 
 > 🔌 协议集成赛季 — `@dream-xi/mcp-client` · Model Context Protocol · 工具枚举 · 工具调用 · stdio 传输
