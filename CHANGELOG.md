@@ -11,6 +11,18 @@
 
 ---
 
+## [2.8.0-alpha] - 2026-07-06
+
+> ⏱ 频次限制赛季 — `@dream-xi/throttle` · 节流限制 · 防抖延迟 · 边界触发
+
+### Added
+
+- **`packages/throttle/`**：函数节流与防抖频次控制工具库（新建包，零外部依赖）
+  - **`throttle(fn, wait, options)`**：限制高频函数调用在指定周期内最多触发一次，支持 `leading` 和 `trailing` 选项配置。
+  - **`debounce(fn, wait, options)`**：当函数停止触发一定延迟后才执行回调，支持 `immediate` 立即调用。
+
+---
+
 ## [2.7.0-alpha] - 2026-07-06
 
 > ⚙️ 工作流状态赛季 — `@dream-xi/state` · 有限状态机 · 转换守卫 · 回调钩子
