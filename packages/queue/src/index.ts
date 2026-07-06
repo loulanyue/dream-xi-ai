@@ -38,10 +38,10 @@
 
 /** 任务状态 */
 export type TaskStatus =
-  | "pending"   // 等待中（含延迟等待）
-  | "running"   // 执行中
-  | "done"      // 成功完成
-  | "failed"    // 最终失败（重试耗尽）
+  | "pending" // 等待中（含延迟等待）
+  | "running" // 执行中
+  | "done" // 成功完成
+  | "failed" // 最终失败（重试耗尽）
   | "cancelled"; // 已取消（AbortSignal）
 
 /** 添加任务的选项 */
@@ -94,7 +94,13 @@ export interface QueueCallbacks<T = unknown> {
   /** 任务成功完成 */
   onSuccess?: (taskId: string, result: TaskResult<T>, label: string | undefined) => void;
   /** 单次执行失败（含重试中的失败） */
-  onFail?: (taskId: string, error: unknown, attempt: number, willRetry: boolean, label: string | undefined) => void;
+  onFail?: (
+    taskId: string,
+    error: unknown,
+    attempt: number,
+    willRetry: boolean,
+    label: string | undefined,
+  ) => void;
   /** 队列变为空（所有任务完成或失败） */
   onDrain?: () => void;
 }
@@ -169,12 +175,19 @@ function nextId(): string {
 /** 指数退避等待 */
 function sleep(ms: number, signal?: AbortSignal): Promise<void> {
   return new Promise<void>((resolve, reject) => {
-    if (signal?.aborted) { reject(new DOMException("Aborted", "AbortError")); return; }
-    const timer = setTimeout(resolve, ms);
-    signal?.addEventListener("abort", () => {
-      clearTimeout(timer);
+    if (signal?.aborted) {
       reject(new DOMException("Aborted", "AbortError"));
-    }, { once: true });
+      return;
+    }
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer);
+        reject(new DOMException("Aborted", "AbortError"));
+      },
+      { once: true },
+    );
   });
 }
 
@@ -200,10 +213,10 @@ export class TaskQueue<T = unknown> {
   private totalCancelled = 0;
 
   constructor(options: TaskQueueOptions<T> = {}) {
-    this.concurrency         = options.concurrency         ?? 5;
-    this.defaultPriority     = options.defaultPriority     ?? 0;
-    this.defaultMaxRetries   = options.defaultMaxRetries   ?? 0;
-    this.callbacks           = options.callbacks           ?? {};
+    this.concurrency = options.concurrency ?? 5;
+    this.defaultPriority = options.defaultPriority ?? 0;
+    this.defaultMaxRetries = options.defaultMaxRetries ?? 0;
+    this.callbacks = options.callbacks ?? {};
   }
 
   // ── add ───────────────────────────────────────────────────────────────────
@@ -227,29 +240,33 @@ export class TaskQueue<T = unknown> {
       }
 
       const node: TaskNode<T> = {
-        id:               nextId(),
+        id: nextId(),
         fn,
-        priority:         options.priority         ?? this.defaultPriority,
-        availableAt:      options.delayMs ? Date.now() + options.delayMs : 0,
-        maxRetries:       options.maxRetries        ?? this.defaultMaxRetries,
-        baseRetryDelayMs: options.baseRetryDelayMs  ?? 500,
-        signal,
-        label:            options.label,
+        priority: options.priority ?? this.defaultPriority,
+        availableAt: options.delayMs ? Date.now() + options.delayMs : 0,
+        maxRetries: options.maxRetries ?? this.defaultMaxRetries,
+        baseRetryDelayMs: options.baseRetryDelayMs ?? 500,
         resolve,
         reject,
-        status:           "pending",
+        status: "pending",
+        ...(options.signal !== undefined ? { signal: options.signal } : {}),
+        ...(options.label !== undefined ? { label: options.label } : {}),
       };
 
       // AbortSignal 监听
-      signal?.addEventListener("abort", () => {
-        const idx = this.pending.indexOf(node);
-        if (idx !== -1) {
-          this.pending.splice(idx, 1);
-          node.status = "cancelled";
-          this.totalCancelled++;
-          reject(new DOMException("Task cancelled", "AbortError"));
-        }
-      }, { once: true });
+      signal?.addEventListener(
+        "abort",
+        () => {
+          const idx = this.pending.indexOf(node);
+          if (idx !== -1) {
+            this.pending.splice(idx, 1);
+            node.status = "cancelled";
+            this.totalCancelled++;
+            reject(new DOMException("Task cancelled", "AbortError"));
+          }
+        },
+        { once: true },
+      );
 
       this._enqueue(node);
       this._tick();
@@ -261,20 +278,25 @@ export class TaskQueue<T = unknown> {
   private _paused = false;
 
   /** 暂停调度（不影响正在执行的任务） */
-  pause(): void { this._paused = true; }
+  pause(): void {
+    this._paused = true;
+  }
 
   /** 恢复调度 */
-  resume(): void { this._paused = false; this._tick(); }
+  resume(): void {
+    this._paused = false;
+    this._tick();
+  }
 
   // ── stats ─────────────────────────────────────────────────────────────────
 
   /** 当前队列统计快照 */
   stats(): QueueStats {
     return {
-      pending:        this.pending.length,
-      running:        this.running,
+      pending: this.pending.length,
+      running: this.running,
       totalCompleted: this.totalCompleted,
-      totalFailed:    this.totalFailed,
+      totalFailed: this.totalFailed,
       totalCancelled: this.totalCancelled,
     };
   }
@@ -323,8 +345,10 @@ export class TaskQueue<T = unknown> {
         setTimeout(() => this._tick(), earliest - now);
         break;
       }
-      const [node] = this.pending.splice(idx, 1);
-      this._execute(node);
+      const node = this.pending.splice(idx, 1)[0];
+      if (node) {
+        this._execute(node);
+      }
     }
   }
 
@@ -355,7 +379,7 @@ export class TaskQueue<T = unknown> {
         const result: TaskResult<T> = {
           value,
           durationMs: Date.now() - startedAt,
-          attempts:   attempt + 1,
+          attempts: attempt + 1,
         };
         this.callbacks.onSuccess?.(node.id, result, node.label);
         node.resolve(result);
@@ -367,7 +391,7 @@ export class TaskQueue<T = unknown> {
         this.callbacks.onFail?.(node.id, err, attempt + 1, willRetry, node.label);
 
         if (willRetry) {
-          const delay = node.baseRetryDelayMs * Math.pow(2, attempt);
+          const delay = node.baseRetryDelayMs * 2 ** attempt;
           sleep(delay, node.signal)
             .then(() => this._runWithRetry(node, attempt + 1, startedAt))
             .catch((abortErr: unknown) => {
@@ -425,12 +449,14 @@ export function createQueue<T = unknown>(options?: TaskQueueOptions<T>): TaskQue
  * 后台批量任务传 `priority: 0`（默认）。
  */
 export const llmQueue = createQueue<unknown>({
-  concurrency:       3,
+  concurrency: 3,
   defaultMaxRetries: 2,
   callbacks: {
     onFail: (id, err, attempt, willRetry) => {
       const errMsg = err instanceof Error ? err.message : String(err);
-      console.warn(`[llmQueue] task ${id} attempt ${attempt} failed: ${errMsg}${willRetry ? " (retrying)" : " (exhausted)"}`);
+      console.warn(
+        `[llmQueue] task ${id} attempt ${attempt} failed: ${errMsg}${willRetry ? " (retrying)" : " (exhausted)"}`,
+      );
     },
     onDrain: () => {
       console.debug("[llmQueue] all tasks completed");
@@ -444,6 +470,6 @@ export const llmQueue = createQueue<unknown>({
  * 用于报告生成、历史数据归档等非实时后台任务，严格串行避免资源争抢。
  */
 export const analysisQueue = createQueue<unknown>({
-  concurrency:       1,
+  concurrency: 1,
   defaultMaxRetries: 0,
 });
