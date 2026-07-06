@@ -11,6 +11,23 @@
 
 ---
 
+## [2.3.0-alpha] - 2026-07-06
+
+> 🔌 协议集成赛季 — `@dream-xi/mcp-client` · Model Context Protocol · 工具枚举 · 工具调用 · stdio 传输
+
+### Added
+
+- **`packages/mcp-client/`**：Model Context Protocol (MCP) 客户端实现（新建包，零外部运行时依赖）
+  - **`McpClient`**：用于与外部 MCP 服务端建立 stdio (标准输入输出) 交互通道。
+    - `connect()`：启动外部进程（如 npx 启动的 server）并进行标准协议握手初始化。
+    - `listTools()`：列出服务端提供的所有可用工具 (McpTool)。
+    - `callTool(name, args)`：通过 JSON-RPC 2.0 格式异步调用具体的工具。
+    - `request(method, params)` / `disconnect()`：基础请求传输与连接关闭管理。
+  - **JSON-RPC 2.0 消息处理**：
+    - 支持基于行分割的 JSON 数据协议解析与异步状态回调管理。
+
+---
+
 ## [2.2.0-alpha] - 2026-07-06
 
 > 🛠 基础工具赛季 — `@dream-xi/utils` · 深度合并 · 健值提取与剔除 · 自增随机 ID · 异步等待
