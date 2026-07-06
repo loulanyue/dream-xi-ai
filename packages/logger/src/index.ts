@@ -142,7 +142,7 @@ function serializeError(err: unknown): SerializedError {
     const serialized: SerializedError = {
       type: err.constructor.name,
       message: err.message,
-      stack: err.stack,
+      ...(err.stack !== undefined ? { stack: err.stack } : {}),
     };
     const code = (err as NodeJS.ErrnoException).code;
     if (code !== undefined) serialized.code = code;

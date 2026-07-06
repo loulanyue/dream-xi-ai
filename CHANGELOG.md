@@ -11,6 +11,19 @@
 
 ---
 
+## [2.6.0-alpha] - 2026-07-06
+
+> 📂 结构化解析赛季 — `@dream-xi/parser` · 代码块提取 · Markdown 章节分割 · 键值解析
+
+### Added
+
+- **`packages/parser/`**：大模型结构化回复解析器（新建包，零外部运行时依赖）
+  - **`parseJsonBlock`**：提取 Markdown 围栏（fences）内的 JSON 文本，内置防错和回退查找机制，容错率高。
+  - **`parseMarkdownSections`**：根据大纲标题（如 `#` / `##` / `###`）对回复进行段落与章节提取。
+  - **`parseKeyValueLines`**：轻量行解析器，自动剥离空行、注释（如 `#` / `//`），快速提取 `key: value` 模式。
+
+---
+
 ## [2.5.0-alpha] - 2026-07-06
 
 > 📝 提示词模板赛季 — `@dream-xi/prompt` · 变量插值 · 格式验证 · 结构化组装
