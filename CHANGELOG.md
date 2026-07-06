@@ -11,6 +11,25 @@
 
 ---
 
+## [2.2.0-alpha] - 2026-07-06
+
+> 🛠 基础工具赛季 — `@dream-xi/utils` · 深度合并 · 健值提取与剔除 · 自增随机 ID · 异步等待
+
+### Added
+
+- **`packages/utils/`**：通用辅助工具库（新建包，零运行时依赖）
+  - **对象操作工具**：
+    - `isObject(val)`：检查值是否为普通非数组对象。
+    - `deepMerge(target, ...sources)`：深度递归合并多个对象，解决 TypeScript exactOptionalPropertyTypes 兼容。
+    - `pick(obj, keys)` / `omit(obj, keys)`：安全地从对象中提取或剔除某些字段。
+  - **唯一标识工具**：
+    - `uuid()`：符合 RFC4122 v4 的轻量随机 UUID 生成器。
+    - `nextId(prefix?)`：进程内自增、高可读性的时间戳 ID 生成器。
+  - **流程控制工具**：
+    - `delay(ms, signal?)`：异步延时等待函数，支持 AbortSignal 取消。
+
+---
+
 ## [2.1.0-alpha] - 2026-07-06
 
 > 🧠 上下文赛季 — `@dream-xi/context` · 对话窗口管理 · Token 预算估算 · 消息压缩截断 · 上下文快照
