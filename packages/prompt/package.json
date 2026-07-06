@@ -1,0 +1,24 @@
+{
+  "name": "@dream-xi/prompt",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — Prompt template engine supporting variables, dynamic section rendering, and system prompt formatting. Zero dependencies.",
+  "keywords": ["dream-xi", "prompt", "template", "llm-prompt", "typescript"],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}

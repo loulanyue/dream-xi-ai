@@ -11,6 +11,23 @@
 
 ---
 
+## [2.5.0-alpha] - 2026-07-06
+
+> 📝 提示词模板赛季 — `@dream-xi/prompt` · 变量插值 · 格式验证 · 结构化组装
+
+### Added
+
+- **`packages/prompt/`**：提示词模板引擎实现（新建包，零外部依赖）
+  - **`PromptTemplate`**：用于动态解析并生成提示词内容。
+    - 自动发现变量：支持 `{{variable}}` 语法模式匹配。
+    - `render(params)`：变量替换与全量匹配完整度校验。
+  - **`SystemPromptBuilder`**：用于流畅链式构造系统级的 Prompt 文本。
+    - `addSection(title, content)`：支持子标题和段落拼接。
+    - `addRule(rule)`：支持有序排列的硬性边界规则限制。
+    - `build()`：全段合并导出。
+
+---
+
 ## [2.4.0-alpha] - 2026-07-06
 
 > 🤖 智能体基础赛季 — `@dream-xi/agent` · 身份标识管理 · 状态跟踪 · 思考循环 · 全局总线联动
