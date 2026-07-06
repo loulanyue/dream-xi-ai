@@ -11,6 +11,22 @@
 
 ---
 
+## [2.9.0-alpha] - 2026-07-06
+
+> 📊 指标遥测赛季 — `@dream-xi/telemetry` · 指标收集 · Span 耗时测量 · 数据归纳
+
+### Added
+
+- **`packages/telemetry/`**：运行时指标遥测工具库（新建包，零外部依赖）
+  - **`TelemetryTracker`**：收集与记录性能/资源指标的核心管理类。
+    - `startSpan(name, tags)`：开启耗时 Span，返回完成测量并自动记录指标的回调。
+    - `record(name, value, tags)`：记录任意维度的数据记录（如 Token 用量、缓存命中等）。
+    - `summary(name)`：提供归总数据计算，输出总和、均值、最大值和次数。
+    - `getAllMetrics()` / `reset()`：管理指标状态。
+  - **`telemetry`**：预置的全局单例，支持无状态导入。
+
+---
+
 ## [2.8.0-alpha] - 2026-07-06
 
 > ⏱ 频次限制赛季 — `@dream-xi/throttle` · 节流限制 · 防抖延迟 · 边界触发
