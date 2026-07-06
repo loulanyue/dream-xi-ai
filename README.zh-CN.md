@@ -10,7 +10,7 @@
 [![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![GitHub Stars](https://img.shields.io/github/stars/loulanyue/dream-xi-ai?style=flat&color=FFD700&logo=github&label=Stars)](https://github.com/loulanyue/dream-xi-ai/stargazers)
-[![Packages](https://img.shields.io/badge/Packages-22-8B5CF6?logo=npm&logoColor=white)](packages/)
+[![Packages](https://img.shields.io/badge/Packages-23-8B5CF6?logo=npm&logoColor=white)](packages/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
 [English](README.md) | **中文**
