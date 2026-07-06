@@ -55,7 +55,7 @@
  * Topic → Payload 映射接口。
  * 用户通过泛型参数传入自己的映射，获得完整类型推断。
  */
-export type TopicMap = Record<string, unknown>;
+export type TopicMap = object;
 
 /** 取消订阅函数 */
 export type Unsubscribe = () => void;
@@ -101,13 +101,13 @@ export interface PubSubOptions {
 // ─────────────────────────────────────────────────────────────────────────────
 
 interface Subscription<T> {
-  id:       number;
-  pattern:  string;   // 原始 pattern，可含 *
-  regex:    RegExp;   // 编译后的正则
+  id: number;
+  pattern: string; // 原始 pattern，可含 *
+  regex: RegExp; // 编译后的正则
   callback: Subscriber<T>;
-  filter?:  (payload: T) => boolean;
-  once:     boolean;
-  active:   boolean;
+  filter?: (payload: T) => boolean;
+  once: boolean;
+  active: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -123,10 +123,10 @@ interface Subscription<T> {
 function patternToRegex(pattern: string): RegExp {
   const escaped = pattern
     .replace(/[.+^${}()|[\]\\]/g, "\\$&") // 转义 regex 特殊字符（保留 *）
-    .replace(/\\\*/g, "*")                 // 还原 * 为未转义
-    .replace(/\*\*/g, "__GLOBSTAR__")      // 临时保护 **
-    .replace(/\*/g, "[^.]+")              // * → 匹配单段
-    .replace(/__GLOBSTAR__/g, ".+");      // ** → 匹配多段
+    .replace(/\\\*/g, "*") // 还原 * 为未转义
+    .replace(/\*\*/g, "__GLOBSTAR__") // 临时保护 **
+    .replace(/\*/g, "[^.]+") // * → 匹配单段
+    .replace(/__GLOBSTAR__/g, ".+"); // ** → 匹配多段
   return new RegExp(`^${escaped}$`);
 }
 
@@ -160,9 +160,11 @@ export class PubSub<TMap extends TopicMap = Record<string, unknown>> {
 
   constructor(options: PubSubOptions = {}) {
     this.catchErrors = options.catchErrors ?? true;
-    this.onError     = options.onError     ?? ((err, topic) => {
-      console.error(`[PubSub] subscriber error on topic "${topic}":`, err);
-    });
+    this.onError =
+      options.onError ??
+      ((err, topic) => {
+        console.error(`[PubSub] subscriber error on topic "${topic}":`, err);
+      });
   }
 
   // ── subscribe ─────────────────────────────────────────────────────────────
@@ -194,15 +196,17 @@ export class PubSub<TMap extends TopicMap = Record<string, unknown>> {
     callback: Subscriber<K extends keyof TMap ? TMap[K] : unknown>,
     options: SubscribeOptions<K extends keyof TMap ? TMap[K] : unknown> = {},
   ): Unsubscribe {
-    const id  = ++_subId;
+    const id = ++_subId;
     const sub: Subscription<unknown> = {
       id,
       pattern,
-      regex:    patternToRegex(pattern),
+      regex: patternToRegex(pattern),
       callback: callback as Subscriber<unknown>,
-      filter:   options.filter as ((payload: unknown) => boolean) | undefined,
-      once:     options.once ?? false,
-      active:   true,
+      once: options.once ?? false,
+      active: true,
+      ...(options.filter !== undefined
+        ? { filter: options.filter as (payload: unknown) => boolean }
+        : {}),
     };
 
     this.subs.set(id, sub);
@@ -261,11 +265,7 @@ export class PubSub<TMap extends TopicMap = Record<string, unknown>> {
    * 同步发布消息（依次调用订阅者，等待每个完成）。
    * 适合测试或需要确定性执行顺序的场景。
    */
-  publishSync<K extends string & keyof TMap>(
-    topic: K,
-    payload: TMap[K],
-    retain = false,
-  ): void {
+  publishSync<K extends string & keyof TMap>(topic: K, payload: TMap[K], retain = false): void {
     if (retain) this.retained.set(topic as string, payload);
     const matched = this._match(topic as string);
     for (const sub of matched) {
@@ -278,7 +278,9 @@ export class PubSub<TMap extends TopicMap = Record<string, unknown>> {
 
   /** 取消所有订阅 */
   clearSubscriptions(): void {
-    for (const sub of this.subs.values()) { sub.active = false; }
+    for (const sub of this.subs.values()) {
+      sub.active = false;
+    }
     this.subs.clear();
   }
 
@@ -379,23 +381,23 @@ export function createPubSub<TMap extends TopicMap = Record<string, unknown>>(
  */
 export interface DreamXiTopics {
   // 比赛事件
-  "match.start":       { matchId: string; homeTeam: string; awayTeam: string };
-  "match.goal":        { matchId: string; scorer: string; minute: number; team: string };
-  "match.end":         { matchId: string; score: [number, number]; winner: string | null };
+  "match.start": { matchId: string; homeTeam: string; awayTeam: string };
+  "match.goal": { matchId: string; scorer: string; minute: number; team: string };
+  "match.end": { matchId: string; score: [number, number]; winner: string | null };
   // 球员事件
-  "player.sub":        { matchId: string; in: string; out: string; minute: number };
-  "player.injury":     { matchId: string; player: string; severity: "minor" | "major" };
+  "player.sub": { matchId: string; in: string; out: string; minute: number };
+  "player.injury": { matchId: string; player: string; severity: "minor" | "major" };
   // 战术事件
-  "tactic.changed":    { matchId: string; newTactic: string; reason: string };
-  "tactic.evaluated":  { matchId: string; tactic: string; score: number };
+  "tactic.changed": { matchId: string; newTactic: string; reason: string };
+  "tactic.evaluated": { matchId: string; tactic: string; score: number };
   // LLM 任务事件
-  "llm.request":       { taskId: string; model: string; promptHash: string };
-  "llm.response":      { taskId: string; durationMs: number; tokensUsed: number };
-  "llm.error":         { taskId: string; error: string; retryable: boolean };
+  "llm.request": { taskId: string; model: string; promptHash: string };
+  "llm.response": { taskId: string; durationMs: number; tokensUsed: number };
+  "llm.error": { taskId: string; error: string; retryable: boolean };
   // 系统事件
-  "system.startup":    { version: string; startedAt: string };
-  "system.shutdown":   { reason: string };
-  "system.error":      { source: string; message: string; fatal: boolean };
+  "system.startup": { version: string; startedAt: string };
+  "system.shutdown": { reason: string };
+  "system.error": { source: string; message: string; fatal: boolean };
 }
 
 /**
