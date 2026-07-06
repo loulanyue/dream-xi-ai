@@ -11,6 +11,31 @@
 
 ---
 
+## [2.1.0-alpha] - 2026-07-06
+
+> 🧠 上下文赛季 — `@dream-xi/context` · 对话窗口管理 · Token 预算估算 · 消息压缩截断 · 上下文快照
+
+### Added
+
+- **`packages/context/`**：LLM 对话上下文管理器（新建包，零运行时依赖）
+  - **`ContextWindow`**：Agent 对话上下文管理类，支持最大 Token/最大消息条数限制
+    - `addUser(content, metadata?)` / `addAssistant(content, metadata?)` / `addTool(content, metadata?)` / `addMessage(role, content, metadata?)`：添加各种角色的消息，自动跟踪预估 Token。
+    - `overBudget`：判断是否超出 Token 限制，提供布尔值状态。
+    - `compress()`：异步压缩上下文，调用配置的消息压缩器。
+    - `toMessages()` / `toFullMessages()`：导出兼容主流 LLM 的消息结构。
+    - `snapshot()` / `restore(snap)`：创建或恢复上下文快照，方便多路径生成回滚。
+    - `stats()`：获取当前消息条数、token 使用率、最大限制等数据统计。
+  - **消息压缩策略**：
+    - `TruncateCompressor`：从最旧的非 system 消息开始截断以腾出 Token。
+    - `HeadTailCompressor`：保留头部 K 条（如最初任务）和尾部 K 条，中间部分使用占位符省略。
+  - **Token 估算器**：
+    - 针对 CJK 中日韩和英文混合内容进行了优化的内置估算算法。
+  - **预设配置**：
+    - `createTacticAnalystContext()`：战术分析师预设上下文（24k Token，30 条限制，保留首尾）。
+    - `createManagerContext()`：球队管理员预设上下文（8k Token，20 条限制，直接截断）。
+
+---
+
 ## [2.0.0-alpha] - 2026-07-05
 
 > 📡 通信赛季 — `@dream-xi/pubsub` · 通配符 Pub/Sub · 类型安全 · 异步派发 · Retain 消息
