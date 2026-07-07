@@ -11,6 +11,23 @@
 
 ---
 
+## [3.1.0-alpha] - 2026-07-07
+
+> 🔀 流水线执行赛季 — `@dream-xi/pipeline` · 顺序步骤 · 并行步骤 · 条件守卫
+
+### Added
+
+- **`packages/pipeline/`**：Agent 工作流执行管道（新建包，零外部运行时依赖）
+  - **`Pipeline<T>`**：顺序步骤链式执行引擎，每步输出作为下步输入的上下文。
+    - `run(initialContext)`：从初始值开始执行所有步骤，返回完整的 `PipelineResult`（含耗时、每步状态）。
+    - `pipe(step)`：不可变地追加步骤，返回新 Pipeline 实例（链式组合友好）。
+    - `when` 守卫：每步支持可选条件函数，返回 false 时跳过该步骤（context 直接透传）。
+  - **`parallelStep(name, steps)`**：将多个步骤包装为并发执行的单一步骤，部分失败不影响其他步骤。
+  - **`conditionalStep(name, when, run)`**：条件步骤语法糖，无需手动构建步骤对象。
+  - **`PipelineResult<T>`**：执行摘要包含总耗时、各步记录、最终输出和整体成功标志。
+
+---
+
 ## [3.0.0-alpha] - 2026-07-08
 
 > 🔧 严格类型合规赛季 — 全量 TypeScript 严格模式适配 · 25 个包零错误构建 · 编译链条全面打通
