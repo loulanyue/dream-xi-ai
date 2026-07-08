@@ -17,20 +17,20 @@
  *   GET  /api/fair-play/stats  — 铁律守卫统计
  */
 
-import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
-import type { DreamXiConfig } from "@dream-xi/types";
+import { type IncomingMessage, type ServerResponse, createServer } from "node:http";
 import { FairPlayGuard, createStrictGuard } from "@dream-xi/fair-play";
 import { MemoryManager, createInMemoryManager } from "@dream-xi/memory";
 import { MessageRouter } from "@dream-xi/router";
 import { createDefaultRegistry } from "@dream-xi/tactic";
+import type { DreamXiConfig } from "@dream-xi/types";
 import {
-  requestLogger,
-  corsMiddleware,
-  sendError,
   type RequestWithId,
+  corsMiddleware,
+  requestLogger,
+  sendError,
 } from "./middleware/index.js";
 import { handleHealth } from "./routes/health.js";
-import { handleGetPlayers, handleGetPlayer } from "./routes/players.js";
+import { handleGetPlayer, handleGetPlayers } from "./routes/players.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 服务器上下文（运行时共享的单例实例）
@@ -69,7 +69,7 @@ async function dispatch(
   ctx: ServerContext,
 ): Promise<void> {
   const { method } = req;
-  const url = new URL(req.url ?? "/", `http://localhost`);
+  const url = new URL(req.url ?? "/", "http://localhost");
   const path = url.pathname;
   const rid = req.requestId;
 

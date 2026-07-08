@@ -8,8 +8,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { DreamXiConfig, PlayerId } from "@dream-xi/types";
 import { PLAYER_DEFINITIONS } from "@dream-xi/types";
+import { sendError, sendJson } from "../middleware/index.js";
 import type { PlayerStatusResponse } from "../types.js";
-import { sendJson, sendError } from "../middleware/index.js";
 
 const PLAYER_IDS: PlayerId[] = ["leo", "andre", "flash", "wall", "gate"];
 
@@ -17,7 +17,7 @@ const PLAYER_IDS: PlayerId[] = ["leo", "andre", "flash", "wall", "gate"];
  * GET /api/players — 获取所有球员状态
  */
 export function handleGetPlayers(
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse,
   config: DreamXiConfig,
   requestId: string,
@@ -30,7 +30,7 @@ export function handleGetPlayers(
  * GET /api/players/:id — 获取单名球员状态
  */
 export function handleGetPlayer(
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse,
   config: DreamXiConfig,
   playerId: string,

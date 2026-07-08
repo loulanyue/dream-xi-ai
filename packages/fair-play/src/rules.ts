@@ -14,10 +14,10 @@
 
 /** 四条铁律的标识符 */
 export type RuleId =
-  | "data-sanctuary"    // 数据圣殿：不删除持久化存储
-  | "process-safety"    // 进程自保：不杀死父进程
-  | "config-readonly"   // 配置只读：不修改运行时配置
-  | "port-boundary";    // 端口边界：不跨越服务端口
+  | "data-sanctuary" // 数据圣殿：不删除持久化存储
+  | "process-safety" // 进程自保：不杀死父进程
+  | "config-readonly" // 配置只读：不修改运行时配置
+  | "port-boundary"; // 端口边界：不跨越服务端口
 
 /** 违规严重等级 */
 export type ViolationSeverity = "block" | "warn" | "log";

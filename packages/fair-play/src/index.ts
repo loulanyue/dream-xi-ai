@@ -19,7 +19,7 @@ export type {
 } from "./action-checker.js";
 
 import type { FairPlayConfig } from "@dream-xi/types";
-import { checkAction, type ActionIntent, type CheckResult } from "./action-checker.js";
+import { type ActionIntent, type CheckResult, checkAction } from "./action-checker.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 违规错误
@@ -212,7 +212,7 @@ export function createStrictGuard(): FairPlayGuard {
 export function createLenientGuard(): FairPlayGuard {
   return new FairPlayGuard({
     protectPersistentData: false,
-    protectParentProcess: true,  // 进程安全始终开启
+    protectParentProcess: true, // 进程安全始终开启
     enforceReadOnlyConfig: false,
     enforcePortBoundaries: false,
     allowedPorts: [],

@@ -73,7 +73,7 @@ export type ValidationResult<T> = ValidationSuccess<T> | ValidationFailure;
 // ─────────────────────────────────────────────────────────────────────────────
 
 /** Schema 描述符基类 */
-abstract class Schema<T> {
+abstract class Schema<_T> {
   protected _optional = false;
   protected _label?: string;
 
@@ -106,7 +106,7 @@ export class StringSchema extends Schema<string> {
   private _minLength?: number;
   private _maxLength?: number;
   private _pattern?: RegExp;
-  private _patternMsg?: string;
+  private _patternMsg?: string | undefined;
   private _oneOf?: readonly string[];
   private _trim = false;
 
@@ -142,7 +142,7 @@ export class StringSchema extends Schema<string> {
   }
 
   _validate(value: unknown, path: string): ValidationError[] {
-    const label = this._label ?? path || "该字段";
+    const label = this._label ?? (path || "该字段");
 
     if (value === undefined || value === null || value === "") {
       if (this._optional) return [];
@@ -220,7 +220,7 @@ export class NumberSchema extends Schema<number> {
   }
 
   _validate(value: unknown, path: string): ValidationError[] {
-    const label = this._label ?? path || "该字段";
+    const label = this._label ?? (path || "该字段");
 
     if (value === undefined || value === null) {
       if (this._optional) return [];
@@ -263,7 +263,7 @@ export class NumberSchema extends Schema<number> {
 
 export class BooleanSchema extends Schema<boolean> {
   _validate(value: unknown, path: string): ValidationError[] {
-    const label = this._label ?? path || "该字段";
+    const label = this._label ?? (path || "该字段");
 
     if (value === undefined || value === null) {
       if (this._optional) return [];
@@ -303,7 +303,7 @@ export class ArraySchema<Item> extends Schema<Item[]> {
   }
 
   _validate(value: unknown, path: string): ValidationError[] {
-    const label = this._label ?? path || "该字段";
+    const label = this._label ?? (path || "该字段");
 
     if (value === undefined || value === null) {
       if (this._optional) return [];
@@ -369,7 +369,7 @@ export class ObjectSchema<S extends Record<string, Schema<unknown>>> extends Sch
   }
 
   _validate(value: unknown, path: string): ValidationError[] {
-    const label = this._label ?? path || "该字段";
+    const label = this._label ?? (path || "该字段");
 
     if (value === undefined || value === null) {
       if (this._optional) return [];
@@ -461,10 +461,7 @@ export const v = {
  * const { message, threadId } = result.data;
  * ```
  */
-export function validate<T>(
-  schema: Schema<T>,
-  value: unknown,
-): ValidationResult<T> {
+export function validate<T>(schema: Schema<T>, value: unknown): ValidationResult<T> {
   const errors = schema._validate(value, "");
   if (errors.length === 0) {
     return { ok: true, data: value as T };
@@ -492,20 +489,26 @@ export const ChatRequestSchema = v.object({
   message: v.string().minLength(1).maxLength(4000).label("消息内容"),
   threadId: v.string().optional().label("线程 ID"),
   playerId: v.string().oneOf(PLAYER_IDS).optional().label("指定球员"),
-  options: v.object({
-    stream:      v.boolean().optional().label("流式输出"),
-    temperature: v.number().min(0).max(2).optional().label("温度参数"),
-    maxTokens:   v.number().min(1).max(32768).integer().optional().label("最大 Token 数"),
-    systemHint:  v.string().maxLength(500).optional().label("系统提示补充"),
-  }).optional().label("请求选项"),
+  options: v
+    .object({
+      stream: v.boolean().optional().label("流式输出"),
+      temperature: v.number().min(0).max(2).optional().label("温度参数"),
+      maxTokens: v.number().min(1).max(32768).integer().optional().label("最大 Token 数"),
+      systemHint: v.string().maxLength(500).optional().label("系统提示补充"),
+    })
+    .optional()
+    .label("请求选项"),
 });
 
 /**
  * POST /api/threads 请求体 Schema。
  */
 export const CreateThreadSchema = v.object({
-  title:        v.string().minLength(1).maxLength(200).optional().label("线程标题"),
-  participants: v.array(v.string().oneOf([...PLAYER_IDS, "coach"])).optional().label("参与者"),
+  title: v.string().minLength(1).maxLength(200).optional().label("线程标题"),
+  participants: v
+    .array(v.string().oneOf([...PLAYER_IDS, "coach"]))
+    .optional()
+    .label("参与者"),
 });
 
 /**
@@ -513,9 +516,9 @@ export const CreateThreadSchema = v.object({
  */
 export const WriteMemorySchema = v.object({
   playerId: v.string().oneOf(PLAYER_IDS).label("球员 ID"),
-  layer:    v.string().oneOf(["episodic", "semantic"]).label("记忆层级"),
-  content:  v.string().minLength(1).maxLength(10000).label("记忆内容"),
-  tags:     v.array(v.string().maxLength(50)).maxItems(20).optional().label("标签"),
+  layer: v.string().oneOf(["episodic", "semantic"]).label("记忆层级"),
+  content: v.string().minLength(1).maxLength(10000).label("记忆内容"),
+  tags: v.array(v.string().maxLength(50)).maxItems(20).optional().label("标签"),
 });
 
 /**
@@ -523,8 +526,8 @@ export const WriteMemorySchema = v.object({
  */
 export const SearchMemorySchema = v.object({
   playerId: v.string().oneOf(PLAYER_IDS).label("球员 ID"),
-  q:        v.string().minLength(1).maxLength(500).label("搜索关键词"),
-  limit:    v.number().min(1).max(50).integer().optional().label("返回数量"),
+  q: v.string().minLength(1).maxLength(500).label("搜索关键词"),
+  limit: v.number().min(1).max(50).integer().optional().label("返回数量"),
 });
 
 /**
@@ -545,7 +548,7 @@ export function formatValidationErrors(
   errors: ValidationError[],
 ): Array<{ field: string; message: string }> {
   return errors.map((e) => ({
-    field:   e.path || "body",
+    field: e.path || "body",
     message: e.message,
   }));
 }

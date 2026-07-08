@@ -8,8 +8,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { DreamXiConfig } from "@dream-xi/types";
 import { PLAYER_DEFINITIONS } from "@dream-xi/types";
-import type { HealthCheckResponse } from "../types.js";
 import { sendJson } from "../middleware/index.js";
+import type { HealthCheckResponse } from "../types.js";
 
 const START_TIME = Date.now();
 const VERSION = "1.0.0-alpha";
@@ -21,7 +21,7 @@ const VERSION = "1.0.0-alpha";
  * GET /api/health
  */
 export function handleHealth(
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse,
   config: DreamXiConfig,
   requestId: string,

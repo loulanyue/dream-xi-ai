@@ -8,12 +8,8 @@
 
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { ServerContext } from "../index.js";
+import { parseJsonBody, sendError, sendJson } from "../middleware/index.js";
 import type { CreateThreadRequest, ThreadSummary } from "../types.js";
-import {
-  parseJsonBody,
-  sendJson,
-  sendError,
-} from "../middleware/index.js";
 
 /**
  * GET /api/threads  — 列出所有线程
@@ -52,8 +48,8 @@ export async function handleThreads(
 
   const thread = ctx.router.threads.create({
     createdBy: "coach",
-    title: body.title,
-    tags: body.tags,
+    ...(body.title !== undefined ? { title: body.title } : {}),
+    ...(body.tags !== undefined ? { tags: body.tags } : {}),
   });
   ctx.router.threads.setActive(thread.id);
 
@@ -75,7 +71,7 @@ export async function handleThreads(
  * POST /api/threads/:id/archive — 归档线程
  */
 export async function handleArchiveThread(
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse,
   ctx: ServerContext,
   threadId: string,
@@ -104,10 +100,15 @@ export async function handleArchiveThread(
     }
   }
 
-  sendJson(res, {
-    id: archived.id,
-    title: archived.title,
-    status: archived.status,
-    archivedAt: new Date().toISOString(),
-  }, 200, requestId);
+  sendJson(
+    res,
+    {
+      id: archived.id,
+      title: archived.title,
+      status: archived.status,
+      archivedAt: new Date().toISOString(),
+    },
+    200,
+    requestId,
+  );
 }

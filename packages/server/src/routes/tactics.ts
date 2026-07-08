@@ -9,7 +9,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { TacticDefinition } from "@dream-xi/types";
 import type { ServerContext } from "../index.js";
-import { sendJson, sendError } from "../middleware/index.js";
+import { sendError, sendJson } from "../middleware/index.js";
 
 /** 对外暴露的战术摘要（省略完整 systemPrompt） */
 export interface TacticSummary {
@@ -32,10 +32,10 @@ function toSummary(t: TacticDefinition): TacticSummary {
     description: t.description,
     category: t.category,
     applicablePositions: t.applicablePositions,
-    preferredPlayer: t.preferredPlayer,
     conflicts: t.conflicts ?? [],
     estimatedTokenOverhead: t.estimatedTokenOverhead,
     triggerKeywords: t.trigger.keywords ?? [],
+    ...(t.preferredPlayer !== undefined ? { preferredPlayer: t.preferredPlayer } : {}),
   };
 }
 
@@ -66,9 +66,8 @@ export function handleGetTactics(
 
   // 按类别过滤
   const category = url.searchParams.get("category") as TacticDefinition["category"] | null;
-  const all = category !== null
-    ? ctx.tacticRegistry.getByCategory(category)
-    : ctx.tacticRegistry.getAll();
+  const all =
+    category !== null ? ctx.tacticRegistry.getByCategory(category) : ctx.tacticRegistry.getAll();
 
   const summaries = all.map(toSummary);
   sendJson(res, { tactics: summaries, total: summaries.length }, 200, requestId);
@@ -78,7 +77,7 @@ export function handleGetTactics(
  * GET /api/tactics/:id — 获取单条战术详情（含完整系统提示）
  */
 export function handleGetTactic(
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse,
   ctx: ServerContext,
   tacticId: string,
@@ -91,10 +90,15 @@ export function handleGetTactic(
   }
 
   // 完整详情包含 systemPrompt（教练有权查看战术手册）
-  sendJson(res, {
-    ...toSummary(tactic),
-    systemPrompt: tactic.systemPrompt,
-    version: tactic.version,
-    author: tactic.author,
-  }, 200, requestId);
+  sendJson(
+    res,
+    {
+      ...toSummary(tactic),
+      systemPrompt: tactic.systemPrompt,
+      version: tactic.version,
+      author: tactic.author,
+    },
+    200,
+    requestId,
+  );
 }

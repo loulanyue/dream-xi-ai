@@ -17,12 +17,12 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { PlayerTacticSlot, detectTriggers } from "@dream-xi/tactic";
 import type { PlayerId } from "@dream-xi/types";
 import { PLAYER_DEFINITIONS } from "@dream-xi/types";
-import { PlayerTacticSlot, detectTriggers } from "@dream-xi/tactic";
 import type { ServerContext } from "../index.js";
+import { parseJsonBody, sendError, sendJson } from "../middleware/index.js";
 import type { ChatRequest, ChatResponse } from "../types.js";
-import { parseJsonBody, sendJson, sendError, type RequestWithId } from "../middleware/index.js";
 
 /**
  * POST /api/chat
@@ -56,7 +56,13 @@ export async function handleChat(
     target: `http://localhost:${ctx.config.server.port}/api/chat`,
   });
   if (!guardResult.allowed) {
-    sendError(res, 403, "FAIR_PLAY_VIOLATION", guardResult.rejectionMessage ?? "铁律违规", requestId);
+    sendError(
+      res,
+      403,
+      "FAIR_PLAY_VIOLATION",
+      guardResult.rejectionMessage ?? "铁律违规",
+      requestId,
+    );
     return;
   }
 
@@ -92,7 +98,7 @@ export async function handleChat(
   const playerDef = PLAYER_DEFINITIONS[targetPlayerId];
 
   // 步骤 5：查询情景记忆（最近 3 条，注入上下文）
-  const episodicMemories = await ctx.memory.queryEpisodic({
+  const _episodicMemories = await ctx.memory.queryEpisodic({
     playerId: targetPlayerId,
     limit: 3,
     minImportance: 0.3,
@@ -115,13 +121,19 @@ export async function handleChat(
     `你是 ${playerDef.nameZh}（${playerDef.nameEn}），编号 #${playerDef.number}。`,
     `职责：${playerDef.description}`,
     memoryContext ? `\n${memoryContext}` : "",
-  ].filter(Boolean).join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   const fullSystemPrompt = tacticSlot.buildSystemPrompt(basePrompt);
 
   // 步骤 8：模拟球员回复（Stub — 真实 LLM 接入在后续版本）
   const stubReply = buildStubReply(targetPlayerId, message, tacticSlot.loadedIds, fullSystemPrompt);
-  const stubTokens = { input: Math.floor(fullSystemPrompt.length / 4), output: Math.floor(stubReply.length / 4), total: 0 };
+  const stubTokens = {
+    input: Math.floor(fullSystemPrompt.length / 4),
+    output: Math.floor(stubReply.length / 4),
+    total: 0,
+  };
   stubTokens.total = stubTokens.input + stubTokens.output;
 
   // 步骤 9：追加到工作记忆
@@ -157,24 +169,18 @@ function buildStubReply(
   _systemPrompt: string,
 ): string {
   const def = PLAYER_DEFINITIONS[playerId];
-  const tacticNote = loadedTactics.length > 0
-    ? `\n\n> 🎯 当前战术：${loadedTactics.join("、")}`
-    : "";
+  const tacticNote =
+    loadedTactics.length > 0 ? `\n\n> 🎯 当前战术：${loadedTactics.join("、")}` : "";
 
   const replyPrefixes: Record<PlayerId, string> = {
     leo: `[${def.nameZh} #${def.number}] 收到指令，正在分析...\n\n`,
     andre: `[${def.nameZh} #${def.number}] 收到，开始审查...\n\n`,
     flash: `[${def.nameZh} #${def.number}] 明白，快速响应！\n\n`,
     wall: `[${def.nameZh} #${def.number}] 了解，稳扎稳打。\n\n`,
-    gate: `[质量门禁] 正在执行门禁检查...\n\n`,
+    gate: "[质量门禁] 正在执行门禁检查...\n\n",
   };
 
   const prefix = replyPrefixes[playerId] ?? `[${def.nameZh}] `;
 
-  return (
-    prefix +
-    `你的请求「${message.slice(0, 50)}${message.length > 50 ? "..." : ""}」已收到。` +
-    `\n\n> ⚠️ 当前为 Stub 模式，真实 LLM 接入将在 v1.2.0 版本完成。` +
-    tacticNote
-  );
+  return `${prefix}你的请求「${message.slice(0, 50)}${message.length > 50 ? "..." : ""}」已收到。\n\n> ⚠️ 当前为 Stub 模式，真实 LLM 接入将在 v1.2.0 版本完成。${tacticNote}`;
 }

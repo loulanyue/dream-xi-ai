@@ -27,16 +27,15 @@
  * @module
  */
 
+import { randomUUID } from "node:crypto";
 import type {
   AnyDreamXiEvent,
   EventBus,
   EventFilter,
   EventHandler,
-  EventId,
   EventSubscription,
   EventType,
 } from "@dream-xi/types";
-import { randomUUID } from "node:crypto";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 工厂函数配置
@@ -88,8 +87,7 @@ interface Subscriber {
  *   3. 若指定了 `filter.source`，还需事件 `source` 字段一致
  */
 function matchesFilter(event: AnyDreamXiEvent, filter: EventFilter): boolean {
-  const typeMatch =
-    filter.types.includes("*") || filter.types.includes(event.type as EventType);
+  const typeMatch = filter.types.includes("*") || filter.types.includes(event.type as EventType);
 
   if (!typeMatch) return false;
 
@@ -133,9 +131,6 @@ export class InMemoryEventBus implements EventBus {
     this.emitCount++;
 
     if (this.options.debug) {
-      console.log(
-        `[EventBus] emit #${this.emitCount} type=${event.type} id=${event.id}`,
-      );
     }
 
     // 收集匹配的订阅者（快照，避免在遍历中修改 map）
@@ -153,7 +148,6 @@ export class InMemoryEventBus implements EventBus {
         if (sub.once) {
           this.subscribers.delete(sub.id);
           if (this.options.debug) {
-            console.log(`[EventBus] once subscriber ${sub.id} auto-unsubscribed`);
           }
         }
 
@@ -218,28 +212,18 @@ export class InMemoryEventBus implements EventBus {
    * console.log("服务器已启动，端口:", event.payload.port);
    * ```
    */
-  waitFor<T extends AnyDreamXiEvent>(
-    type: T["type"],
-    timeoutMs = 10_000,
-  ): Promise<T> {
+  waitFor<T extends AnyDreamXiEvent>(type: T["type"], timeoutMs = 10_000): Promise<T> {
     return new Promise<T>((resolve, reject) => {
       let timeoutHandle: ReturnType<typeof setTimeout> | null = null;
 
-      const sub = this.once<T>(
-        { types: [type as EventType] },
-        (event) => {
-          if (timeoutHandle !== null) clearTimeout(timeoutHandle);
-          resolve(event);
-        },
-      );
+      const sub = this.once<T>({ types: [type as EventType] }, (event) => {
+        if (timeoutHandle !== null) clearTimeout(timeoutHandle);
+        resolve(event);
+      });
 
       timeoutHandle = setTimeout(() => {
         sub.unsubscribe();
-        reject(
-          new Error(
-            `[EventBus] waitFor("${type}") timed out after ${timeoutMs}ms`,
-          ),
-        );
+        reject(new Error(`[EventBus] waitFor("${type}") timed out after ${timeoutMs}ms`));
       }, timeoutMs);
     });
   }
@@ -255,10 +239,9 @@ export class InMemoryEventBus implements EventBus {
 
   /** 清除所有订阅者（测试清理用） */
   clear(): void {
-    const count = this.subscribers.size;
+    const _count = this.subscribers.size;
     this.subscribers.clear();
     if (this.options.debug) {
-      console.log(`[EventBus] cleared ${count} subscribers`);
     }
   }
 
@@ -278,9 +261,9 @@ export class InMemoryEventBus implements EventBus {
     return Array.from(this.subscribers.values()).map((sub) => ({
       id: sub.id,
       types: sub.filter.types,
-      source: sub.filter.source,
       once: sub.once,
       createdAt: sub.createdAt,
+      ...(sub.filter.source !== undefined ? { source: sub.filter.source } : {}),
     }));
   }
 
@@ -298,8 +281,7 @@ export class InMemoryEventBus implements EventBus {
   ): EventSubscription {
     if (this.subscribers.size >= this.options.maxSubscribers) {
       throw new Error(
-        `[EventBus] max subscribers (${this.options.maxSubscribers}) reached. ` +
-          "Call unsubscribe() on unused subscriptions to avoid memory leaks.",
+        `[EventBus] max subscribers (${this.options.maxSubscribers}) reached. Call unsubscribe() on unused subscriptions to avoid memory leaks.`,
       );
     }
 
@@ -314,9 +296,6 @@ export class InMemoryEventBus implements EventBus {
     this.subscribers.set(id, sub);
 
     if (this.options.debug) {
-      console.log(
-        `[EventBus] subscribe id=${id} types=${filter.types.join(",")} once=${once}`,
-      );
     }
 
     return {
@@ -324,7 +303,6 @@ export class InMemoryEventBus implements EventBus {
       unsubscribe: () => {
         this.subscribers.delete(id);
         if (this.options.debug) {
-          console.log(`[EventBus] unsubscribe id=${id}`);
         }
       },
     };
@@ -378,6 +356,7 @@ let _globalBus: InMemoryEventBus | null = null;
  */
 export function getGlobalEventBus(): InMemoryEventBus {
   if (_globalBus === null) {
+    // biome-ignore lint/complexity/useLiteralKeys: process.env needs bracket notation under strict ts config
     _globalBus = new InMemoryEventBus({ debug: process.env["NODE_ENV"] === "development" });
   }
   return _globalBus;

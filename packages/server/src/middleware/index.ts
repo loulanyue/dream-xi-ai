@@ -31,23 +31,16 @@ function generateRequestId(): string {
  * });
  * ```
  */
-export function requestLogger(
-  req: RequestWithId,
-  res: ServerResponse,
-  next: () => void,
-): void {
+export function requestLogger(req: RequestWithId, res: ServerResponse, next: () => void): void {
   req.requestId = generateRequestId();
   req.startTime = Date.now();
 
   const { method, url } = req;
 
   res.on("finish", () => {
-    const duration = Date.now() - req.startTime;
+    const _duration = Date.now() - req.startTime;
     const status = res.statusCode;
-    const icon = status >= 500 ? "🔴" : status >= 400 ? "🟡" : "🟢";
-    console.log(
-      `${icon} [${req.requestId}] ${method} ${url} → ${status} (${duration}ms)`,
-    );
+    const _icon = status >= 500 ? "🔴" : status >= 400 ? "🟡" : "🟢";
   });
 
   next();
@@ -62,10 +55,9 @@ export function corsMiddleware(
   res: ServerResponse,
   next: () => void,
 ): void {
-  const origin = req.headers["origin"];
+  const origin = req.headers.origin;
   const isAllowed =
-    allowedOrigins.includes("*") ||
-    (origin !== undefined && allowedOrigins.includes(origin));
+    allowedOrigins.includes("*") || (origin !== undefined && allowedOrigins.includes(origin));
 
   if (isAllowed && origin !== undefined) {
     res.setHeader("Access-Control-Allow-Origin", origin);
@@ -86,9 +78,7 @@ export function corsMiddleware(
 /**
  * JSON 请求体解析（原生 Node.js，无需 express.json()）
  */
-export async function parseJsonBody<T = unknown>(
-  req: IncomingMessage,
-): Promise<T> {
+export async function parseJsonBody<T = unknown>(req: IncomingMessage): Promise<T> {
   return new Promise((resolve, reject) => {
     let body = "";
     req.on("data", (chunk: Buffer) => {
@@ -113,7 +103,7 @@ export function sendError(
   statusCode: number,
   code: string,
   message: string,
-  requestId: string = "unknown",
+  requestId = "unknown",
 ): void {
   const body = JSON.stringify({
     ok: false,
@@ -134,8 +124,8 @@ export function sendError(
 export function sendJson<T>(
   res: ServerResponse,
   data: T,
-  statusCode: number = 200,
-  requestId: string = "unknown",
+  statusCode = 200,
+  requestId = "unknown",
 ): void {
   const body = JSON.stringify({
     ok: true,

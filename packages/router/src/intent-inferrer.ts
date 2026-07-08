@@ -85,7 +85,7 @@ export function inferIntent(text: string): InferenceResult {
 
   // 计算每名球员的关键词匹配得分
   for (const [playerId, patterns] of Object.entries(PLAYER_KEYWORDS) as Array<
-    [PlayerId, typeof PLAYER_KEYWORDS[PlayerId]]
+    [PlayerId, (typeof PLAYER_KEYWORDS)[PlayerId]]
   >) {
     for (const { pattern, weight } of patterns) {
       const matchCount = (text.match(pattern) ?? []).length;

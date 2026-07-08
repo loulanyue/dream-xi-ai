@@ -5,16 +5,15 @@
  */
 
 import type { IncomingMessage, ServerResponse } from "node:http";
-import type { PlayerId } from "@dream-xi/types";
 import type { ServerContext } from "../index.js";
-import type { FairPlayStatsResponse } from "../types.js";
 import { sendJson } from "../middleware/index.js";
+import type { FairPlayStatsResponse } from "../types.js";
 
 /**
  * GET /api/fair-play/stats
  */
 export function handleFairPlayStats(
-  req: IncomingMessage,
+  _req: IncomingMessage,
   res: ServerResponse,
   ctx: ServerContext,
   requestId: string,

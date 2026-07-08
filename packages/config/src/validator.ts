@@ -8,11 +8,7 @@
  * 参考：@dream-xi/types ConfigValidationResult
  */
 
-import type {
-  ConfigValidationResult,
-  DreamXiConfig,
-  PlayerId,
-} from "@dream-xi/types";
+import type { ConfigValidationResult, DreamXiConfig, PlayerId } from "@dream-xi/types";
 
 /** 已知的球员 ID 列表 */
 const PLAYER_IDS: PlayerId[] = ["leo", "andre", "flash", "wall"];
@@ -33,7 +29,7 @@ export function validateConfig(config: DreamXiConfig): ConfigValidationResult {
   }
 
   if (!config.server.baseUrl.startsWith("http")) {
-    errors.push(`BASE_URL 必须以 http:// 或 https:// 开头`);
+    errors.push("BASE_URL 必须以 http:// 或 https:// 开头");
   }
 
   // ─── 安全配置 ──────────────────────────────────────────────────────────
@@ -51,8 +47,13 @@ export function validateConfig(config: DreamXiConfig): ConfigValidationResult {
   if (config.memory.backend === "redis") {
     if (config.memory.redisUrl === undefined || config.memory.redisUrl === "") {
       errors.push("存储后端设置为 redis 但 REDIS_URL 未配置");
-    } else if (!config.memory.redisUrl.startsWith("redis://") && !config.memory.redisUrl.startsWith("rediss://")) {
-      warnings.push(`REDIS_URL 格式异常：${config.memory.redisUrl}（应以 redis:// 或 rediss:// 开头）`);
+    } else if (
+      !config.memory.redisUrl.startsWith("redis://") &&
+      !config.memory.redisUrl.startsWith("rediss://")
+    ) {
+      warnings.push(
+        `REDIS_URL 格式异常：${config.memory.redisUrl}（应以 redis:// 或 rediss:// 开头）`,
+      );
     }
   }
 
@@ -80,9 +81,7 @@ export function validateConfig(config: DreamXiConfig): ConfigValidationResult {
   }
 
   if (benchedPlayers.length > 0) {
-    warnings.push(
-      `以下球员因未配置 API Key 将在替补席：${benchedPlayers.join(", ")}`,
-    );
+    warnings.push(`以下球员因未配置 API Key 将在替补席：${benchedPlayers.join(", ")}`);
   }
 
   // ─── MCP 端口冲突检测 ───────────────────────────────────────────────────
@@ -132,8 +131,12 @@ export function formatValidationReport(result: ConfigValidationResult): string {
   }
 
   lines.push("");
-  lines.push(`⚽ 上场球员（${result.configuredPlayers.length}）：${result.configuredPlayers.join("、") || "无"}`);
-  lines.push(`🪑 替补席（${result.benchedPlayers.length}）：${result.benchedPlayers.join("、") || "无"}`);
+  lines.push(
+    `⚽ 上场球员（${result.configuredPlayers.length}）：${result.configuredPlayers.join("、") || "无"}`,
+  );
+  lines.push(
+    `🪑 替补席（${result.benchedPlayers.length}）：${result.benchedPlayers.join("、") || "无"}`,
+  );
 
   if (result.errors.length > 0) {
     lines.push("", "🚫 错误（必须修复）：");

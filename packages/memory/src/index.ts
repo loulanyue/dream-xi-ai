@@ -11,14 +11,14 @@
  */
 
 import type { MemoryConfig, Message, PlayerId, ThreadId } from "@dream-xi/types";
-import { WorkingMemory, messageToWorkingEntry } from "./working-memory.js";
 import {
+  type EpisodicBackend,
   EpisodicMemoryStore,
   InMemoryEpisodicBackend,
-  type EpisodicBackend,
   type QueryEpisodicOptions,
   type SaveEpisodicOptions,
 } from "./episodic-store.js";
+import { WorkingMemory, messageToWorkingEntry } from "./working-memory.js";
 
 export { WorkingMemory, messageToWorkingEntry } from "./working-memory.js";
 export {
@@ -135,7 +135,7 @@ export class MemoryManager {
     return {
       compressionTriggered: compressionResult.compressed,
       tokensUsed: working.tokenUsage.used,
-      episodicMemoryId,
+      ...(episodicMemoryId !== undefined ? { episodicMemoryId } : {}),
     };
   }
 
@@ -291,7 +291,7 @@ export function createRedisManager(
       semanticMemoryPath: "./data/semantic",
       identityAnchorInterval: 10,
     },
-    episodicBackend,
+    ...(episodicBackend !== undefined ? { episodicBackend } : {}),
   });
 }
 

@@ -128,7 +128,7 @@ export class WorkingMemory {
    * 每隔 N 条消息注入一次身份锚定卡，防止上下文压缩导致球员失忆。
    * 参考：docs/ARCHITECTURE.md § ADR-002
    */
-  buildContextMessages(anchorInterval: number = 10): WorkingMemoryEntry[] {
+  buildContextMessages(anchorInterval = 10): WorkingMemoryEntry[] {
     const anchor = this.buildIdentityAnchor();
     const anchorEntry: WorkingMemoryEntry = {
       messageId: `anchor-${Date.now()}`,
@@ -213,9 +213,7 @@ export class WorkingMemory {
       `职责：${anchor.coreRole}`,
       `性格：${anchor.personalityKeywords.join("、")}`,
       `球队铁律：${anchor.fairPlayRules.join("；")}`,
-      anchor.activeTactics.length > 0
-        ? `当前战术：${anchor.activeTactics.join("、")}`
-        : "",
+      anchor.activeTactics.length > 0 ? `当前战术：${anchor.activeTactics.join("、")}` : "",
     ]
       .filter(Boolean)
       .join("\n");
@@ -249,16 +247,18 @@ export class WorkingMemory {
 export function messageToWorkingEntry(message: Message): WorkingMemoryEntry {
   const estimatedTokens = estimateTokens(message.content);
 
+  const playerId =
+    message.senderId !== "coach" && message.senderId !== "system"
+      ? (message.senderId as PlayerId)
+      : undefined;
+
   return {
     messageId: message.id,
     role: message.source,
-    playerId:
-      message.senderId !== "coach" && message.senderId !== "system"
-        ? (message.senderId as PlayerId)
-        : undefined,
     content: message.content,
     tokenCount: estimatedTokens,
     timestamp: message.createdAt,
+    ...(playerId !== undefined ? { playerId } : {}),
   };
 }
 

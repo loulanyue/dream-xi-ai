@@ -83,8 +83,8 @@ export const eventFactory = {
       type: "message.send.requested",
       timestamp: makeTimestamp(),
       version: VERSION,
-      source,
       payload,
+      ...(source !== undefined ? { source } : {}),
     };
   },
 
@@ -97,8 +97,8 @@ export const eventFactory = {
       type: "message.route.resolved",
       timestamp: makeTimestamp(),
       version: VERSION,
-      source,
       payload,
+      ...(source !== undefined ? { source } : {}),
     };
   },
 
@@ -126,9 +126,7 @@ export const eventFactory = {
     };
   },
 
-  messageDeliverFailed(
-    payload: MessageDeliverFailedEvent["payload"],
-  ): MessageDeliverFailedEvent {
+  messageDeliverFailed(payload: MessageDeliverFailedEvent["payload"]): MessageDeliverFailedEvent {
     return {
       id: makeId(),
       type: "message.deliver.failed",
@@ -147,16 +145,14 @@ export const eventFactory = {
       type: "message.reply.received",
       timestamp: makeTimestamp(),
       version: VERSION,
-      source,
       payload,
+      ...(source !== undefined ? { source } : {}),
     };
   },
 
   // ── 线程事件 ──────────────────────────────────────────────────────────────
 
-  threadCreated(
-    payload: ThreadCreatedEvent["payload"],
-  ): ThreadCreatedEvent {
+  threadCreated(payload: ThreadCreatedEvent["payload"]): ThreadCreatedEvent {
     return {
       id: makeId(),
       type: "thread.created",
@@ -166,9 +162,7 @@ export const eventFactory = {
     };
   },
 
-  threadStatusChanged(
-    payload: ThreadStatusChangedEvent["payload"],
-  ): ThreadStatusChangedEvent {
+  threadStatusChanged(payload: ThreadStatusChangedEvent["payload"]): ThreadStatusChangedEvent {
     return {
       id: makeId(),
       type: "thread.status.changed",
@@ -180,9 +174,7 @@ export const eventFactory = {
 
   // ── 记忆事件 ──────────────────────────────────────────────────────────────
 
-  memoryWriteRequested(
-    payload: MemoryWriteRequestedEvent["payload"],
-  ): MemoryWriteRequestedEvent {
+  memoryWriteRequested(payload: MemoryWriteRequestedEvent["payload"]): MemoryWriteRequestedEvent {
     return {
       id: makeId(),
       type: "memory.write.requested",
@@ -192,9 +184,7 @@ export const eventFactory = {
     };
   },
 
-  memoryWriteCompleted(
-    payload: MemoryWriteCompletedEvent["payload"],
-  ): MemoryWriteCompletedEvent {
+  memoryWriteCompleted(payload: MemoryWriteCompletedEvent["payload"]): MemoryWriteCompletedEvent {
     return {
       id: makeId(),
       type: "memory.write.completed",
@@ -204,9 +194,7 @@ export const eventFactory = {
     };
   },
 
-  memoryWriteFailed(
-    payload: MemoryWriteFailedEvent["payload"],
-  ): MemoryWriteFailedEvent {
+  memoryWriteFailed(payload: MemoryWriteFailedEvent["payload"]): MemoryWriteFailedEvent {
     return {
       id: makeId(),
       type: "memory.write.failed",
@@ -216,9 +204,7 @@ export const eventFactory = {
     };
   },
 
-  memoryEvictCompleted(
-    payload: MemoryEvictCompletedEvent["payload"],
-  ): MemoryEvictCompletedEvent {
+  memoryEvictCompleted(payload: MemoryEvictCompletedEvent["payload"]): MemoryEvictCompletedEvent {
     return {
       id: makeId(),
       type: "memory.evict.completed",
@@ -243,9 +229,7 @@ export const eventFactory = {
     };
   },
 
-  routerMentionParsed(
-    payload: RouterMentionParsedEvent["payload"],
-  ): RouterMentionParsedEvent {
+  routerMentionParsed(payload: RouterMentionParsedEvent["payload"]): RouterMentionParsedEvent {
     return {
       id: makeId(),
       type: "router.mention.parsed",
@@ -256,9 +240,7 @@ export const eventFactory = {
     };
   },
 
-  routerIntentInferred(
-    payload: RouterIntentInferredEvent["payload"],
-  ): RouterIntentInferredEvent {
+  routerIntentInferred(payload: RouterIntentInferredEvent["payload"]): RouterIntentInferredEvent {
     return {
       id: makeId(),
       type: "router.intent.inferred",
@@ -286,9 +268,7 @@ export const eventFactory = {
 
   // ── 系统事件 ──────────────────────────────────────────────────────────────
 
-  serverStarted(
-    payload: SystemServerStartedEvent["payload"],
-  ): SystemServerStartedEvent {
+  serverStarted(payload: SystemServerStartedEvent["payload"]): SystemServerStartedEvent {
     return {
       id: makeId(),
       type: "system.server.started",
@@ -299,9 +279,7 @@ export const eventFactory = {
     };
   },
 
-  serverStopped(
-    payload: SystemServerStoppedEvent["payload"],
-  ): SystemServerStoppedEvent {
+  serverStopped(payload: SystemServerStoppedEvent["payload"]): SystemServerStoppedEvent {
     return {
       id: makeId(),
       type: "system.server.stopped",
@@ -312,9 +290,7 @@ export const eventFactory = {
     };
   },
 
-  configLoaded(
-    payload: SystemConfigLoadedEvent["payload"],
-  ): SystemConfigLoadedEvent {
+  configLoaded(payload: SystemConfigLoadedEvent["payload"]): SystemConfigLoadedEvent {
     return {
       id: makeId(),
       type: "system.config.loaded",
@@ -325,9 +301,7 @@ export const eventFactory = {
     };
   },
 
-  configInvalid(
-    payload: SystemConfigInvalidEvent["payload"],
-  ): SystemConfigInvalidEvent {
+  configInvalid(payload: SystemConfigInvalidEvent["payload"]): SystemConfigInvalidEvent {
     return {
       id: makeId(),
       type: "system.config.invalid",
@@ -338,9 +312,7 @@ export const eventFactory = {
     };
   },
 
-  healthChecked(
-    payload: SystemHealthCheckedEvent["payload"],
-  ): SystemHealthCheckedEvent {
+  healthChecked(payload: SystemHealthCheckedEvent["payload"]): SystemHealthCheckedEvent {
     return {
       id: makeId(),
       type: "system.health.checked",

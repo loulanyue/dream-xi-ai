@@ -28,12 +28,12 @@ export interface ActionIntent {
 
 /** 操作类型 */
 export type ActionType =
-  | "file-delete"       // 删除文件或目录
-  | "file-write"        // 写文件（包括配置文件）
-  | "command-execute"   // 执行 shell 命令
-  | "process-signal"   // 发送进程信号
-  | "network-request"  // 网络请求
-  | "db-operation"     // 数据库操作
+  | "file-delete" // 删除文件或目录
+  | "file-write" // 写文件（包括配置文件）
+  | "command-execute" // 执行 shell 命令
+  | "process-signal" // 发送进程信号
+  | "network-request" // 网络请求
+  | "db-operation" // 数据库操作
   | "redis-operation"; // Redis 操作
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -79,19 +79,20 @@ const detectDataSanctuary: DetectorFn = (intent, config) => {
 
   // 文件删除操作：检查目标路径
   if (intent.type === "file-delete") {
-    const dangerousPaths = [
-      "/data/", "./data/",
-      ".sqlite", ".db", ".rdb",
-      "dump.sql", "backup",
-    ];
+    const dangerousPaths = ["/data/", "./data/", ".sqlite", ".db", ".rdb", "dump.sql", "backup"];
     return dangerousPaths.some((p) => target.includes(p));
   }
 
   // 命令执行：检查危险命令
   if (intent.type === "command-execute") {
     const dangerousCommands = [
-      "rm -rf", "drop table", "drop database",
-      "truncate", "delete from", "flushall", "flushdb",
+      "rm -rf",
+      "drop table",
+      "drop database",
+      "truncate",
+      "delete from",
+      "flushall",
+      "flushdb",
       "redis-cli flushall",
     ];
     return dangerousCommands.some((cmd) => target.toLowerCase().includes(cmd));
@@ -123,10 +124,16 @@ const detectProcessSafety: DetectorFn = (intent, config) => {
 
   if (intent.type === "command-execute") {
     const dangerous = [
-      "kill -9", "killall", "pkill",
-      "pm2 kill", "pm2 delete all",
-      "shutdown", "reboot", "halt",
-      "systemctl stop", "service stop",
+      "kill -9",
+      "killall",
+      "pkill",
+      "pm2 kill",
+      "pm2 delete all",
+      "shutdown",
+      "reboot",
+      "halt",
+      "systemctl stop",
+      "service stop",
     ];
     return dangerous.some((cmd) => intent.target.toLowerCase().includes(cmd));
   }
@@ -144,9 +151,13 @@ const detectConfigReadonly: DetectorFn = (intent, config) => {
   if (intent.type !== "file-write") return false;
 
   const configFiles = [
-    ".env", "biome.json", "tsconfig.json",
-    "package.json", "pnpm-workspace.yaml",
-    "docker-compose", "nginx.conf",
+    ".env",
+    "biome.json",
+    "tsconfig.json",
+    "package.json",
+    "pnpm-workspace.yaml",
+    "docker-compose",
+    "nginx.conf",
     ".github/workflows",
   ];
 
@@ -166,7 +177,7 @@ const detectPortBoundary: DetectorFn = (intent, config) => {
   const portMatch = intent.target.match(/:(\d+)/);
   if (portMatch === null || portMatch[1] === undefined) return false;
 
-  const port = parseInt(portMatch[1], 10);
+  const port = Number.parseInt(portMatch[1], 10);
   return !config.allowedPorts.includes(port);
 };
 
@@ -217,16 +228,19 @@ export function checkAction(intent: ActionIntent, config: FairPlayConfig): Check
 
   let rejectionMessage: string | undefined;
   if (!allowed) {
-    const lines = blockers.map(
-      (v) => `⛔ ${v.message}\n   「${v.motto}」`,
-    );
+    const lines = blockers.map((v) => `⛔ ${v.message}\n   「${v.motto}」`);
     rejectionMessage = [
-      `🟥 球队铁律违规 — 操作被拒绝`,
+      "🟥 球队铁律违规 — 操作被拒绝",
       `球员：${intent.playerId} | 操作：${intent.type} → ${intent.target}`,
       "",
       ...lines,
     ].join("\n");
   }
 
-  return { allowed, violations, warnings, rejectionMessage };
+  return {
+    allowed,
+    violations,
+    warnings,
+    ...(rejectionMessage !== undefined ? { rejectionMessage } : {}),
+  };
 }

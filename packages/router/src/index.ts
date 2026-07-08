@@ -26,8 +26,8 @@ import type {
   TextBlock,
   ThreadId,
 } from "@dream-xi/types";
-import { parseMentions } from "./mention-parser.js";
 import { inferIntent } from "./intent-inferrer.js";
+import { parseMentions } from "./mention-parser.js";
 import { ThreadManager } from "./thread-manager.js";
 
 export { parseMentions, inferIntent, ThreadManager };
@@ -146,7 +146,10 @@ export class MessageRouter {
       inferredTarget = inference.target;
       inferenceConfidence = inference.confidence;
 
-      if (!inference.isDefault && inference.confidence >= this.config.inferenceConfidenceThreshold) {
+      if (
+        !inference.isDefault &&
+        inference.confidence >= this.config.inferenceConfidenceThreshold
+      ) {
         resolvedTarget = inference.target;
         routeMethod = "inferred";
       } else {
@@ -159,8 +162,8 @@ export class MessageRouter {
     // 步骤 4：构建路由信息
     const routing: MessageRouting = {
       mentions,
-      inferredTarget,
       resolvedTarget,
+      ...(inferredTarget !== undefined ? { inferredTarget } : {}),
     };
 
     // 步骤 5：构建消息内容块
@@ -197,14 +200,10 @@ export class MessageRouter {
   /**
    * 快捷方法：创建新线程并路由消息
    */
-  routeToNewThread(
-    text: string,
-    senderId: PlayerId | "coach",
-    title?: string,
-  ): RouteResult {
+  routeToNewThread(text: string, senderId: PlayerId | "coach", title?: string): RouteResult {
     const thread = this.threads.create({
       createdBy: senderId,
-      title,
+      ...(title !== undefined ? { title } : {}),
     });
     this.threads.setActive(thread.id);
 

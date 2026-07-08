@@ -80,9 +80,8 @@ export class ThreadManager {
    */
   list(filter?: { status?: ThreadStatus }): Thread[] {
     const all = Array.from(this.threads.values());
-    const filtered = filter?.status !== undefined
-      ? all.filter((t) => t.status === filter.status)
-      : all;
+    const filtered =
+      filter?.status !== undefined ? all.filter((t) => t.status === filter.status) : all;
     return filtered.sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
   }
 

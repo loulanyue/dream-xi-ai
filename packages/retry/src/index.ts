@@ -39,9 +39,9 @@
 
 /** 重试策略 */
 export type BackoffStrategy =
-  | "exponential"   // 指数退避（推荐）
-  | "linear"        // 线性增长（固定步长）
-  | "fixed";        // 固定延迟
+  | "exponential" // 指数退避（推荐）
+  | "linear" // 线性增长（固定步长）
+  | "fixed"; // 固定延迟
 
 /** 重试回调上下文 */
 export interface RetryContext {
@@ -128,16 +128,14 @@ export interface RetryOptions<T = unknown> {
  */
 export class RetryExhaustedError extends Error {
   /** 触发本错误的最后一次失败 */
-  readonly cause: Error;
+  override readonly cause: Error;
   /** 总尝试次数（含首次） */
   readonly attempts: number;
   /** 总耗时（毫秒） */
   readonly elapsedMs: number;
 
   constructor(cause: Error, attempts: number, elapsedMs: number) {
-    super(
-      `操作在 ${attempts} 次尝试后仍然失败（耗时 ${elapsedMs}ms）：${cause.message}`,
-    );
+    super(`操作在 ${attempts} 次尝试后仍然失败（耗时 ${elapsedMs}ms）：${cause.message}`);
     this.name = "RetryExhaustedError";
     this.cause = cause;
     this.attempts = attempts;
@@ -185,12 +183,11 @@ function calculateDelay(
 
   switch (strategy) {
     case "exponential":
-      delay = baseDelayMs * Math.pow(factor, attempt - 1);
+      delay = baseDelayMs * factor ** (attempt - 1);
       break;
     case "linear":
       delay = baseDelayMs * attempt;
       break;
-    case "fixed":
     default:
       delay = baseDelayMs;
   }
@@ -210,10 +207,7 @@ function calculateDelay(
 // 带超时的执行器
 // ─────────────────────────────────────────────────────────────────────────────
 
-async function executeWithTimeout<T>(
-  fn: () => Promise<T>,
-  timeoutMs: number,
-): Promise<T> {
+async function executeWithTimeout<T>(fn: () => Promise<T>, timeoutMs: number): Promise<T> {
   return new Promise<T>((resolve, reject) => {
     const timer = setTimeout(() => {
       reject(new RetryTimeoutError(timeoutMs));
@@ -264,12 +258,12 @@ export async function withRetry<T>(
   options: RetryOptions<T> = {},
 ): Promise<T> {
   const {
-    maxAttempts  = 3,
-    baseDelayMs  = 300,
-    maxDelayMs   = 30_000,
-    strategy     = "exponential",
-    factor       = 2,
-    jitter       = true,
+    maxAttempts = 3,
+    baseDelayMs = 300,
+    maxDelayMs = 30_000,
+    strategy = "exponential",
+    factor = 2,
+    jitter = true,
     isRetryable,
     onRetry,
     onExhausted,
@@ -288,9 +282,7 @@ export async function withRetry<T>(
     }
 
     try {
-      const result = timeoutMs !== undefined
-        ? await executeWithTimeout(fn, timeoutMs)
-        : await fn();
+      const result = timeoutMs !== undefined ? await executeWithTimeout(fn, timeoutMs) : await fn();
 
       const elapsedMs = Date.now() - startTime;
       onSuccess?.(result, attempt, elapsedMs);
@@ -372,9 +364,8 @@ export function isRetryable(error: Error): boolean {
   if (error instanceof RetryTimeoutError) return true;
 
   // 检查 HTTP 状态码（LLM SDK 通常把状态码放在 error.status 或 error.statusCode）
-  const status =
-    (error as Record<string, unknown>)["status"] ??
-    (error as Record<string, unknown>)["statusCode"];
+  const errObj = error as unknown as { status?: unknown; statusCode?: unknown };
+  const status = errObj.status ?? errObj.statusCode;
 
   if (typeof status === "number") {
     return RETRYABLE_HTTP_CODES.has(status);
@@ -465,10 +456,10 @@ export class CircuitBreaker {
   private readonly onStateChange?: CircuitBreakerOptions["onStateChange"];
 
   constructor(options: CircuitBreakerOptions = {}) {
-    this.failureThreshold  = options.failureThreshold ?? 5;
-    this.recoveryTimeMs    = options.recoveryTimeMs   ?? 60_000;
-    this.successThreshold  = options.successThreshold ?? 2;
-    this.onStateChange     = options.onStateChange;
+    this.failureThreshold = options.failureThreshold ?? 5;
+    this.recoveryTimeMs = options.recoveryTimeMs ?? 60_000;
+    this.successThreshold = options.successThreshold ?? 2;
+    this.onStateChange = options.onStateChange;
   }
 
   /** 当前断路器状态 */
@@ -490,8 +481,7 @@ export class CircuitBreaker {
 
     if (state === "open") {
       throw new Error(
-        `[CircuitBreaker] 断路器已打开，拒绝请求。` +
-        `下次恢复尝试在 ${this._msUntilHalfOpen()}ms 后`,
+        `[CircuitBreaker] 断路器已打开，拒绝请求。下次恢复尝试在 ${this._msUntilHalfOpen()}ms 后`,
       );
     }
 
@@ -543,10 +533,7 @@ export class CircuitBreaker {
     this.consecutiveSuccesses = 0;
     this.consecutiveFailures++;
 
-    if (
-      this.state !== "open" &&
-      this.consecutiveFailures >= this.failureThreshold
-    ) {
+    if (this.state !== "open" && this.consecutiveFailures >= this.failureThreshold) {
       this._transition("open");
       this.lastOpenedAt = Date.now();
     }
@@ -580,12 +567,12 @@ export class CircuitBreaker {
 export const LLM_RETRY_OPTIONS = {
   maxAttempts: 4,
   baseDelayMs: 1_000,
-  maxDelayMs:  20_000,
-  strategy:    "exponential" as BackoffStrategy,
-  factor:      2,
-  jitter:      true,
+  maxDelayMs: 20_000,
+  strategy: "exponential" as BackoffStrategy,
+  factor: 2,
+  jitter: true,
   isRetryable,
-  timeoutMs:   60_000,
+  timeoutMs: 60_000,
 } satisfies RetryOptions;
 
 /**
@@ -594,10 +581,10 @@ export const LLM_RETRY_OPTIONS = {
 export const INFRA_RETRY_OPTIONS = {
   maxAttempts: 3,
   baseDelayMs: 200,
-  maxDelayMs:  5_000,
-  strategy:    "exponential" as BackoffStrategy,
-  factor:      2,
-  jitter:      true,
+  maxDelayMs: 5_000,
+  strategy: "exponential" as BackoffStrategy,
+  factor: 2,
+  jitter: true,
   isRetryable,
 } satisfies RetryOptions;
 
@@ -606,6 +593,6 @@ export const INFRA_RETRY_OPTIONS = {
  */
 export const LLM_CIRCUIT_BREAKER_OPTIONS = {
   failureThreshold: 5,
-  recoveryTimeMs:   30_000,
+  recoveryTimeMs: 30_000,
   successThreshold: 2,
 } satisfies CircuitBreakerOptions;

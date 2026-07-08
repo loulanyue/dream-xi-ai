@@ -30,7 +30,7 @@ export function requireString(key: string): string {
 export function readInt(key: string, defaultValue: number): number {
   const val = readString(key);
   if (val === undefined) return defaultValue;
-  const parsed = parseInt(val, 10);
+  const parsed = Number.parseInt(val, 10);
   if (Number.isNaN(parsed)) {
     throw new ConfigError(`环境变量 ${key} 必须是整数，实际值：${val}`);
   }
@@ -59,7 +59,7 @@ export function readIntList(key: string, defaultValue: number[] = []): number[] 
   const list = readList(key, []);
   if (list.length === 0) return defaultValue;
   return list.map((s) => {
-    const n = parseInt(s, 10);
+    const n = Number.parseInt(s, 10);
     if (Number.isNaN(n)) throw new ConfigError(`环境变量 ${key} 包含非整数值：${s}`);
     return n;
   });

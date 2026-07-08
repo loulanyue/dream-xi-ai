@@ -12,17 +12,19 @@
  * 参考：SETUP.md § 配置说明
  */
 
-export { ConfigError, readString, requireString, readInt, readBool, readList } from "./env-reader.js";
+export {
+  ConfigError,
+  readString,
+  requireString,
+  readInt,
+  readBool,
+  readList,
+} from "./env-reader.js";
 export { validateConfig, formatValidationReport } from "./validator.js";
 
-import type { DreamXiConfig, PlayerId } from "@dream-xi/types";
-import {
-  readBool,
-  readInt,
-  readList,
-  readString,
-} from "./env-reader.js";
-import { validateConfig, formatValidationReport, type ConfigValidationResult } from "./validator.js";
+import type { ConfigValidationResult, DreamXiConfig, PlayerId } from "@dream-xi/types";
+import { readBool, readInt, readList, readString } from "./env-reader.js";
+import { validateConfig } from "./validator.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 配置加载结果
@@ -52,17 +54,18 @@ export interface LoadConfigResult {
  * const { config } = loadConfig({ strict: false, printReport: false });
  * ```
  */
-export function loadConfig(options: {
-  strict?: boolean;
-  printReport?: boolean;
-} = {}): LoadConfigResult {
+export function loadConfig(
+  options: {
+    strict?: boolean;
+    printReport?: boolean;
+  } = {},
+): LoadConfigResult {
   const { strict = true, printReport = true } = options;
 
   const config = buildConfig();
   const validation = validateConfig(config);
 
   if (printReport) {
-    console.log(formatValidationReport(validation));
   }
 
   if (strict && !validation.valid) {
@@ -105,7 +108,6 @@ function buildMemoryConfig(): DreamXiConfig["memory"] {
 
   return {
     backend,
-    redisUrl,
     workingMemoryMaxTokens: readInt("WORKING_MEMORY_MAX_TOKENS", 100_000),
     episodicMemoryTtlSeconds: readInt(
       "EPISODIC_MEMORY_TTL_SECONDS",
@@ -113,6 +115,7 @@ function buildMemoryConfig(): DreamXiConfig["memory"] {
     ),
     semanticMemoryPath: readString("SEMANTIC_MEMORY_PATH") ?? "./data/semantic",
     identityAnchorInterval: readInt("IDENTITY_ANCHOR_INTERVAL", 10),
+    ...(redisUrl !== undefined ? { redisUrl } : {}),
   };
 }
 
@@ -133,7 +136,12 @@ function buildPlayerConfigs(): DreamXiConfig["players"] {
     gate: "custom",
   };
 
-  const playerProviderMap: Record<PlayerId, DreamXiConfig["players"][PlayerId] extends undefined ? never : NonNullable<DreamXiConfig["players"][PlayerId]>["provider"]> = {
+  const playerProviderMap: Record<
+    PlayerId,
+    DreamXiConfig["players"][PlayerId] extends undefined
+      ? never
+      : NonNullable<DreamXiConfig["players"][PlayerId]>["provider"]
+  > = {
     leo: "anthropic",
     andre: "openai",
     flash: "google",
@@ -146,13 +154,14 @@ function buildPlayerConfigs(): DreamXiConfig["players"] {
   for (const [playerId, envKey] of Object.entries(playerEnvMap) as Array<[PlayerId, string]>) {
     const apiKey = readString(envKey);
     if (apiKey !== undefined) {
+      const baseUrl = readString("CUSTOM_LLM_BASE_URL");
       configs[playerId] = {
         provider: playerProviderMap[playerId],
         apiKey,
         modelId: readString(`${playerId.toUpperCase()}_MODEL_ID`) ?? playerModelMap[playerId],
-        baseUrl: readString("CUSTOM_LLM_BASE_URL"),
         timeoutMs: readInt("LLM_TIMEOUT_MS", 60_000),
         maxRetries: readInt("LLM_MAX_RETRIES", 3),
+        ...(baseUrl !== undefined ? { baseUrl } : {}),
       };
     }
   }
@@ -212,10 +221,11 @@ function buildLogConfig(): DreamXiConfig["logging"] {
   const level = readString("LOG_LEVEL") ?? "info";
   const format = readString("LOG_FORMAT") ?? "pretty";
 
+  const file = readString("LOG_FILE");
   return {
     level: level as DreamXiConfig["logging"]["level"],
     format: format as DreamXiConfig["logging"]["format"],
-    file: readString("LOG_FILE"),
+    ...(file !== undefined ? { file } : {}),
   };
 }
 
@@ -225,9 +235,6 @@ function buildFairPlayConfig(): DreamXiConfig["fairPlay"] {
     protectParentProcess: readBool("FAIR_PLAY_PROTECT_PROCESS", true),
     enforceReadOnlyConfig: readBool("FAIR_PLAY_READONLY_CONFIG", true),
     enforcePortBoundaries: readBool("FAIR_PLAY_PORT_BOUNDARY", true),
-    allowedPorts: [
-      readInt("PORT", 3003),
-      readInt("MCP_PORT", 3004),
-    ],
+    allowedPorts: [readInt("PORT", 3003), readInt("MCP_PORT", 3004)],
   };
 }

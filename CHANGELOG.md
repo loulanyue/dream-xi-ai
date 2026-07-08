@@ -11,6 +11,43 @@
 
 ---
 
+## [3.0.0-alpha] - 2026-07-08
+
+> 🔧 严格类型合规赛季 — 全量 TypeScript 严格模式适配 · 25 个包零错误构建 · 编译链条全面打通
+
+### Fixed
+
+- **全局 `tsconfig.json`**：移除了 `baseUrl` / `paths` 映射配置（该配置导致 `fair-play`、`event-bus` 等依赖 `@dream-xi/types` 源文件的包出现 `rootDir` 越界报错）。
+- **`packages/retry/`**：
+  - `RetryExhaustedError.cause` 字段添加 `override` 修饰符（TS4114）。
+  - HTTP status 访问方式改为 `{ status?: unknown; statusCode?: unknown }` 内联类型转换，修复 `noPropertyAccessFromIndexSignature` 报错。
+- **`packages/validator/`**：
+  - 修复 `_patternMsg` 类型签名（`exactOptionalPropertyTypes` 兼容）。
+  - 修复 5 处 `??` 与 `||` 混用的运算符优先级错误（TS5076）。
+- **`packages/fair-play/`**：
+  - 清空 `tsconfig.json` 中的 `paths` 字段，避免 rootDir 越界。
+  - 修复 `action-checker.ts` `return` 对象中 `rejectionMessage` 的可选属性赋值。
+- **`packages/config/`**：
+  - 从 `./validator.ts` 改为从 `@dream-xi/types` 直接导入 `ConfigValidationResult`。
+  - 修复 `buildMemoryConfig` / `buildPlayerConfigs` / `buildLogConfig` 中 `redisUrl`、`baseUrl`、`file` 等可选字段的 `exactOptionalPropertyTypes` 报错。
+- **`packages/event-bus/`**：
+  - 修复 `factory.ts` 中 3 处含 `source?` 可选参数的工厂方法返回对象赋值。
+  - 修复 `index.ts` `snapshot()` 方法中 `source` 的可选属性展开赋值。
+  - 修复 `process.env["NODE_ENV"]` 的 `noPropertyAccessFromIndexSignature` 报错，添加 `biome-ignore` 注释。
+- **`packages/router/`**：
+  - 修复 `MessageRouting` 中 `inferredTarget` 的可选属性展开写法。
+  - 修复 `routeToNewThread` 中 `CreateThreadOptions.title` 的可选属性展开写法。
+- **`packages/memory/`**：
+  - 修复 `maybeCompressWorkingMemory` 返回对象中 `episodicMemoryId` 的可选属性展开。
+  - 修复 `createRedisManager` 中 `episodicBackend` 的可选属性展开。
+  - 修复 `messageToWorkingEntry` 中 `playerId` 的可选属性展开（`working-memory.ts`）。
+- **`packages/server/`**：
+  - 修复 `routes/tactics.ts` 中 `TacticSummary.preferredPlayer` 的可选属性展开。
+  - 修复 `routes/threads.ts` 中线程创建时 `title` / `tags` 的可选属性展开。
+  - 修复 `main.ts` 中 `process.env["REDIS_URL"]` 等的 `noPropertyAccessFromIndexSignature` 报错。
+
+---
+
 ## [2.9.0-alpha] - 2026-07-06
 
 > 📊 指标遥测赛季 — `@dream-xi/telemetry` · 指标收集 · Span 耗时测量 · 数据归纳

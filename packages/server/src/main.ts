@@ -1,21 +1,5 @@
-/**
- * @dream-xi/server — 服务器启动入口（main.ts）
- *
- * 这是 `pnpm start` / `node packages/server/dist/main.js` 的实际入口。
- * 职责：加载配置 → 验证 → 创建服务器 → 监听端口 → 优雅退出。
- *
- * 启动示例：
- *   pnpm start                  # 使用 .env 配置（需要 Redis）
- *   pnpm start --memory         # 内存模式（无需 Redis）
- *   NODE_ENV=production pnpm start
- *
- * 参考：docs/DEVELOPMENT.md § 快速启动
- * 参考：docs/SETUP.md § 启动服务
- */
-
-import { createServer } from "node:http";
 import { loadConfig } from "@dream-xi/config";
-import { createDreamXiServer, createServerContext } from "./index.js";
+import { createDreamXiServer } from "./index.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 命令行参数解析
@@ -23,11 +7,13 @@ import { createDreamXiServer, createServerContext } from "./index.js";
 
 const args = process.argv.slice(2);
 const isMemoryMode = args.includes("--memory");
-const isDaemonMode = args.includes("--daemon");
+const _isDaemonMode = args.includes("--daemon");
 
 // 内存模式：覆盖 REDIS_URL，强制使用内存后端
 if (isMemoryMode) {
-  delete process.env["REDIS_URL"];
+  // biome-ignore lint/complexity/useLiteralKeys: process.env needs bracket notation under strict ts config
+  process.env["REDIS_URL"] = undefined;
+  // biome-ignore lint/complexity/useLiteralKeys: process.env needs bracket notation under strict ts config
   process.env["MEMORY_BACKEND"] = "memory";
 }
 
@@ -36,14 +22,14 @@ if (isMemoryMode) {
 // ─────────────────────────────────────────────────────────────────────────────
 
 function printBanner(port: number, memoryMode: boolean): void {
-  const lines = [
+  const _lines = [
     "",
     "  ⚽  D R E A M   X I   A I",
     "  ─────────────────────────────────────────",
     `  🌐  HTTP  → http://localhost:${port}`,
     `  🧠  Memory → ${memoryMode ? "In-Memory（重启后丢失）" : "Redis（持久化）"}`,
-    `  🛡️  Fair Play Guard → 已启动`,
-    `  🔀  A2A Router     → 已启动`,
+    "  🛡️  Fair Play Guard → 已启动",
+    "  🔀  A2A Router     → 已启动",
     "",
     "  端点速查：",
     `  GET  http://localhost:${port}/health`,
@@ -56,7 +42,6 @@ function printBanner(port: number, memoryMode: boolean): void {
     "  ─────────────────────────────────────────",
     "",
   ];
-  console.log(lines.join("\n"));
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,7 +53,7 @@ async function main(): Promise<void> {
   let config: ReturnType<typeof loadConfig>["config"];
   try {
     const result = loadConfig({
-      strict: true,      // 配置有误时阻止启动
+      strict: true, // 配置有误时阻止启动
       printReport: true, // 打印球员上场/替补席情况
     });
     config = result.config;
@@ -88,7 +73,7 @@ async function main(): Promise<void> {
     server.on("error", (err: NodeJS.ErrnoException) => {
       if (err.code === "EADDRINUSE") {
         console.error(`\n❌ 端口 ${port} 已被占用。`);
-        console.error(`   请修改 .env 中的 PORT 配置，或先停止占用该端口的进程。\n`);
+        console.error("   请修改 .env 中的 PORT 配置，或先停止占用该端口的进程。\n");
       } else {
         console.error(`\n❌ 服务器启动失败：${err.message}\n`);
       }
@@ -102,15 +87,12 @@ async function main(): Promise<void> {
   });
 
   // 步骤 4：注册优雅退出（Graceful Shutdown）
-  const shutdown = (signal: string): void => {
-    console.log(`\n⚽ 收到 ${signal} 信号，球队有序退场中...`);
-
+  const shutdown = (_signal: string): void => {
     server.close((err) => {
       if (err !== undefined) {
         console.error("退出时发生错误：", err);
         process.exit(1);
       }
-      console.log("✅ 服务器已安全关闭。下次再见！\n");
       process.exit(0);
     });
 

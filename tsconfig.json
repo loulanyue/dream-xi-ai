@@ -20,11 +20,7 @@
     "outDir": "dist",
     "rootDir": "src",
 
-    // 路径
-    "baseUrl": ".",
-    "paths": {
-      "@dream-xi/types": ["packages/types/src/index.ts"]
-    },
+
 
     // 互操作
     "esModuleInterop": true,

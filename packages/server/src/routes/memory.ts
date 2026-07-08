@@ -7,8 +7,8 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import type { PlayerId } from "@dream-xi/types";
 import type { ServerContext } from "../index.js";
+import { sendError, sendJson } from "../middleware/index.js";
 import type { MemoryQueryResponse } from "../types.js";
-import { sendJson, sendError } from "../middleware/index.js";
 
 const VALID_PLAYERS: PlayerId[] = ["leo", "andre", "flash", "wall", "gate"];
 
@@ -28,13 +28,13 @@ export async function handleGetMemory(
   }
 
   const url = new URL(req.url ?? "/", "http://localhost");
-  const limit = parseInt(url.searchParams.get("limit") ?? "10", 10);
-  const minImportance = parseFloat(url.searchParams.get("minImportance") ?? "0");
+  const limit = Number.parseInt(url.searchParams.get("limit") ?? "10", 10);
+  const minImportance = Number.parseFloat(url.searchParams.get("minImportance") ?? "0");
 
   const memories = await ctx.memory.queryEpisodic({
     playerId: playerId as PlayerId,
-    limit: isNaN(limit) ? 10 : limit,
-    minImportance: isNaN(minImportance) ? 0 : minImportance,
+    limit: Number.isNaN(limit) ? 10 : limit,
+    minImportance: Number.isNaN(minImportance) ? 0 : minImportance,
   });
 
   const response: MemoryQueryResponse = {

@@ -11,6 +11,25 @@ importers:
       '@biomejs/biome':
         specifier: ^1.9.0
         version: 1.9.4
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.43
+      rimraf:
+        specifier: ^5.0.0
+        version: 5.0.10
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+
+  packages/agent:
+    dependencies:
+      '@dream-xi/context':
+        specifier: workspace:*
+        version: link:../context
+      '@dream-xi/pubsub':
+        specifier: workspace:*
+        version: link:../pubsub
+    devDependencies:
       rimraf:
         specifier: ^5.0.0
         version: 5.0.10
@@ -85,6 +104,15 @@ importers:
         version: 5.9.3
 
   packages/logger:
+    devDependencies:
+      rimraf:
+        specifier: ^5.0.0
+        version: 5.0.10
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+
+  packages/mcp-client:
     devDependencies:
       rimraf:
         specifier: ^5.0.0
@@ -203,6 +231,15 @@ importers:
         version: 5.9.3
 
   packages/types:
+    devDependencies:
+      rimraf:
+        specifier: ^5.0.0
+        version: 5.0.10
+      typescript:
+        specifier: ^5.6.0
+        version: 5.9.3
+
+  packages/utils:
     devDependencies:
       rimraf:
         specifier: ^5.0.0
