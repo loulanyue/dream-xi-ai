@@ -11,6 +11,27 @@
 
 ---
 
+## [3.2.0-alpha] - 2026-07-09
+
+> 🛠 函数调用赛季 — `@dream-xi/tool` · 工具注册中心 · JSON Schema 参数定义 · 调用历史
+
+### Added
+
+- **`packages/tool/`**：Agent 工具注册与调用框架（新建包，零外部运行时依赖）
+  - **`ToolRegistry`**：工具注册中心核心类
+    - `register(tool)`：注册带 JSON Schema 参数描述的工具，重复注册抛出错误。
+    - `unregister(name)`：按名称注销已注册工具。
+    - `call(name, input)`：类型安全的工具调用，自动记录耗时与 `calledAt` 时间戳。
+    - `toSchemas()`：导出所有工具 Schema（供 LLM function calling 构建参数列表）。
+    - `schemasByTag(tag)`：按标签筛选工具 Schema，便于按能力域分组展示。
+    - `getHistory(limit?)`：获取最近 N 条调用历史（默认 50）。
+    - `clearHistory()`：清空调用历史记录。
+  - **`ToolDefinition<TInput, TOutput>`**：泛型工具定义接口，包含名称、描述、JSON Schema 参数和处理函数。
+  - **`ToolCallResult<TOutput>`**：调用结果封装：输入、输出、耗时、成功标志、错误信息。
+  - **`ToolParameterSchema`**：兼容 OpenAI/Anthropic function calling 格式的 JSON Schema 类型系统。
+
+---
+
 ## [3.1.0-alpha] - 2026-07-07
 
 > 🔀 流水线执行赛季 — `@dream-xi/pipeline` · 顺序步骤 · 并行步骤 · 条件守卫
