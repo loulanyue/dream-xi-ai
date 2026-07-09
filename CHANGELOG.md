@@ -11,6 +11,25 @@
 
 ---
 
+## [3.3.0-alpha] - 2026-07-10
+
+> 🔗 生命周期钩子赛季 — `@dream-xi/hook` · 串行/并行策略 · 优先级排序 · 一次性钩子
+
+### Added
+
+- **`packages/hook/`**：Agent 生命周期钩子系统（新建包，零外部运行时依赖）
+  - **`HookSystem<TMap>`**：泛型钩子管理核心类，`TMap` 定义钩子名 → 载荷类型映射。
+    - `on(name, handler, priority?)`：注册持久钩子，返回注销函数（unsubscribe）。
+    - `once(name, handler, priority?)`：注册一次性钩子，触发后自动移除。
+    - `off(name, handler)`：精确移除某个处理函数。
+    - `emit(name, payload, strategy?)`：触发钩子，返回 `HookEmitResult`（调用数、耗时、错误列表）。
+    - `count(name)` / `hookNames()`：运行时查询已注册钩子信息。
+  - **`AgentLifecycle`**：内置 Dream XI 球员标准生命周期类型：`onCreate` / `onReady` / `onMessage` / `onReply` / `onError` / `onDestroy`。
+  - **串行 / 并行策略**：全局默认 `serial`（按优先级依次执行），`emit` 时可临时切换为 `parallel`（Promise.allSettled，部分失败不影响其他钩子）。
+  - **优先级排序**：priority 数字越小越先执行，支持精细化控制钩子调用顺序。
+
+---
+
 ## [3.2.0-alpha] - 2026-07-09
 
 > 🛠 函数调用赛季 — `@dream-xi/tool` · 工具注册中心 · JSON Schema 参数定义 · 调用历史
