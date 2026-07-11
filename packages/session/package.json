@@ -1,0 +1,32 @@
+{
+  "name": "@dream-xi/session",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — Lightweight conversation session manager with TTL expiry, in-memory storage and session snapshots. Zero dependencies.",
+  "keywords": [
+    "dream-xi",
+    "session",
+    "conversation",
+    "ttl",
+    "session-manager",
+    "agent-session",
+    "typescript"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}

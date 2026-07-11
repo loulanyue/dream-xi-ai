@@ -11,6 +11,28 @@
 
 ---
 
+## [3.5.0-alpha] - 2026-07-11
+
+> 💬 会话管理赛季 — `@dream-xi/session` · TTL 过期 · 消息追加 · 惰性清理 · 快照导出
+
+### Added
+
+- **`packages/session/`**：轻量级对话会话管理器（新建包，零外部运行时依赖）
+  - **`SessionStore`**：内存会话存储核心类，支持 TTL 自动过期。
+    - `create(meta?, initMessages?)`：创建新会话，自动生成 UUID，设置 `expiresAt`。
+    - `get(id)`：惰性检查 TTL，每次读取自动刷新 `lastActiveAt` 和 `expiresAt`。
+    - `appendMessage(id, message)`：追加消息至会话历史，自动填充 `timestamp`。
+    - `updateMeta(id, patch)`：部分更新会话元数据（merge 语义）。
+    - `delete(id)` / `has(id)`：CRUD 完整支持。
+    - `snapshot(id)` / `listAll()`：深拷贝导出单个或全部未过期会话。
+    - `sweep()`：手动触发过期扫描，返回清理数量；构造时可配置 `sweepIntervalMs` 定时自动扫描。
+    - `destroy()`：停止定时器并清空存储（适合测试 / 优雅关闭）。
+  - **`SessionMessage`**：消息类型，支持 `system / user / assistant / tool` 四种角色。
+  - **`SessionMeta`**：会话元数据（`playerId / userId / title / tags / extra`）。
+  - **`SessionStoreOptions`**：支持自定义 TTL、扫描间隔和 ID 生成函数。
+
+---
+
 ## [3.4.0-alpha] - 2026-07-11
 
 > 🌊 流式响应赛季 — `@dream-xi/stream` · SSE 解析 · chunk 累积 · 中止控制 · token 估算
