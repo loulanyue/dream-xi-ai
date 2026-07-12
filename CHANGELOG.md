@@ -11,6 +11,25 @@
 
 ---
 
+## [3.4.0-alpha] - 2026-07-11
+
+> 🌊 流式响应赛季 — `@dream-xi/stream` · SSE 解析 · chunk 累积 · 中止控制 · token 估算
+
+### Added
+
+- **`packages/stream/`**：LLM 流式响应处理器（新建包，零外部运行时依赖）
+  - **`parseSseLines(raw)`**：符合 RFC 8895 标准的 SSE 文本解析器，支持 `data` / `event` / `id` / `retry` 字段，注释行自动忽略，多事件块批量解析。
+  - **`SseStreamReader`**：基于 `ReadableStream<Uint8Array>` 的流读取器（兼容 fetch `response.body`）
+    - `consume(body)`：逐块解码 UTF-8 字节流，按 `\n\n` 边界切分完整 SSE 事件块。
+    - `onChunk` 回调：每个文本 chunk 到达时立即触发，携带 `index / delta / accumulated / receivedAt`。
+    - `onEvent` 回调：原始 SSE 事件级回调，适合需要转发或审计原始事件的场景。
+    - `onDone` 回调：流结束后汇总 `StreamResult`（全文、chunk 数、估算 token、首 token 延迟、总耗时、是否中止）。
+    - `signal` 支持：集成 `AbortController`，可随时中止读取。
+  - **`defaultExtractDelta(data)`**：内置 delta 提取策略，兼容 OpenAI（`choices[0].delta.content`）与 Anthropic（`delta.text`）流式格式，`[DONE]` 信号自动识别为流结束。
+  - **`estimateTokens(text)`**：轻量 token 数估算，英文按空格分词，中文字符 × 0.67 估算，无需引入 tiktoken。
+
+---
+
 ## [3.3.0-alpha] - 2026-07-10
 
 > 🔗 生命周期钩子赛季 — `@dream-xi/hook` · 串行/并行策略 · 优先级排序 · 一次性钩子

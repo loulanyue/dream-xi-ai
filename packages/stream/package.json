@@ -1,0 +1,32 @@
+{
+  "name": "@dream-xi/stream",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — LLM streaming response handler: SSE event parsing, chunk accumulation, token counting and abort control. Zero dependencies.",
+  "keywords": [
+    "dream-xi",
+    "stream",
+    "sse",
+    "streaming",
+    "llm-stream",
+    "server-sent-events",
+    "typescript"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}
