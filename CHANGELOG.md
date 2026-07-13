@@ -11,6 +11,28 @@
 
 ---
 
+## [3.6.0-alpha] - 2026-07-13
+
+> 🔒 并发控制赛季 — `@dream-xi/lock` · 互斥锁 · 信号量 · 命名锁注册中心
+
+### Added
+
+- **`packages/lock/`**：进程内异步并发锁工具（新建包，零外部运行时依赖）
+  - **`Mutex`**：互斥锁，同时只允许 1 个持有者，FIFO 排队等待。
+    - `acquire(timeoutMs?)`：获取锁，返回 `ReleaseFunction`；可选超时参数，超时抛出 `LockTimeoutError`。
+    - `withLock(fn, timeoutMs?)`：语法糖，自动 acquire / release，保证 finally 释放。
+    - `isLocked` / `queueLength`：运行时状态查询。
+  - **`Semaphore`**：信号量，允许最多 N 个任务并发持有令牌（适合限制 LLM API 并发数）。
+    - `acquire(timeoutMs?)` / `withLock(fn, timeoutMs?)`：与 Mutex 对称的 API。
+    - `availableTokens` / `queueLength`：运行时状态查询。
+  - **`LockManager`**：命名锁注册中心，按名称（如 `playerId`）管理独立 Mutex，不同名称互不阻塞。
+    - `getMutex(name)`：获取或创建命名 Mutex。
+    - `withLock(name, fn, timeoutMs?)`：一步式命名锁保护执行。
+    - `cleanup()`：清理空闲锁，释放内存。
+  - **`LockTimeoutError`**：锁超时专用错误类，携带锁名称和超时时长信息。
+
+---
+
 ## [3.5.0-alpha] - 2026-07-11
 
 > 💬 会话管理赛季 — `@dream-xi/session` · TTL 过期 · 消息追加 · 惰性清理 · 快照导出
