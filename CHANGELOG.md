@@ -11,6 +11,26 @@
 
 ---
 
+## [3.7.0-alpha] - 2026-07-13
+
+> ⏱ 任务调度赛季 — `@dream-xi/schedule` · 重复任务 · 延迟任务 · 执行历史 · 优雅关闭
+
+### Added
+
+- **`packages/schedule/`**：Agent 工作流任务调度器（新建包，零外部运行时依赖）
+  - **`Scheduler`**：命名任务注册中心，统一管理任务的生命周期。
+    - `repeat(name, intervalMs, fn)`：注册固定间隔重复执行任务，同名任务自动先取消旧实例。
+    - `delay(name, delayMs, fn)`：注册一次性延迟执行任务，执行完毕后自动从注册表移除。
+    - `cancel(name)`：取消并清除指定任务（clearInterval / clearTimeout）。
+    - `stopAll()`：优雅关闭所有任务，返回停止的任务数量。
+    - `getInfo(name)` / `listAll()`：获取任务状态快照（状态、执行次数、成功/失败统计、最近 10 次运行记录）。
+    - `has(name)` / `size`：运行时查询已注册任务。
+  - **`TaskInfo`**：任务状态快照类型，包含 `status / totalRuns / successRuns / failedRuns / recentRuns`。
+  - **`TaskRun`**：单次执行记录：`runIndex / startedAt / durationMs / success / error`。
+  - **任务状态机**：`idle → running → idle / error`（重复任务）；`idle → running → stopped`（延迟任务）。
+
+---
+
 ## [3.6.0-alpha] - 2026-07-13
 
 > 🔒 并发控制赛季 — `@dream-xi/lock` · 互斥锁 · 信号量 · 命名锁注册中心

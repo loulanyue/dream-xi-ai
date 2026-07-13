@@ -1,0 +1,33 @@
+{
+  "name": "@dream-xi/schedule",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — Lightweight task scheduler for Agent workflows: interval jobs, one-shot timers, named task registry and graceful shutdown. Zero dependencies.",
+  "keywords": [
+    "dream-xi",
+    "schedule",
+    "scheduler",
+    "cron",
+    "interval",
+    "timer",
+    "agent-task",
+    "typescript"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}
