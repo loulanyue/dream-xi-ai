@@ -11,6 +11,29 @@
 
 ---
 
+## [3.8.0-alpha] - 2026-07-14
+
+> ⚡ 弹性容错赛季 — `@dream-xi/circuit-breaker` · 三态状态机 · 失败阈值 · 探针恢复 · 事件监听
+
+### Added
+
+- **`packages/circuit-breaker/`**：LLM API 弹性熔断器（新建包，零外部运行时依赖）
+  - **`CircuitBreaker`**：核心熔断器类，实现标准三态状态机。
+    - `execute(fn)`：用熔断器包裹异步调用；OPEN 状态直接拒绝（抛出 `CircuitOpenError`），自动到达恢复时间后切换 HALF_OPEN 放行探针。
+    - `reset()`：手动强制恢复到 CLOSED 状态（紧急旁路用）。
+    - `getStats()`：运行时统计快照（状态、失败次数、成功次数、被拒次数、探针成功次数、最后失败时间）。
+    - `on(event, handler)` / `off(event, handler)`：轻量事件监听（无依赖）。
+  - **状态转换规则**：
+    - `CLOSED → OPEN`：连续失败达到 `failureThreshold`（默认 5 次）
+    - `OPEN → HALF_OPEN`：等待 `recoveryTimeMs`（默认 30s）后自动转换
+    - `HALF_OPEN → CLOSED`：探针连续成功 `probeSuccessThreshold`（默认 2 次）
+    - `HALF_OPEN → OPEN`：探针失败，重置计时重新等待
+  - **事件类型**：`stateChange`（含 from/to/timestamp）/ `success`（含 durationMs）/ `failure`（含 error/durationMs）/ `rejected`。
+  - **`isFailure` 钩子**：可自定义哪些错误计入失败次数（如 404 Not Found 不触发熔断）。
+  - **`CircuitOpenError`**：熔断开路专用错误，携带熔断器名称信息。
+
+---
+
 ## [3.7.0-alpha] - 2026-07-13
 
 > ⏱ 任务调度赛季 — `@dream-xi/schedule` · 重复任务 · 延迟任务 · 执行历史 · 优雅关闭

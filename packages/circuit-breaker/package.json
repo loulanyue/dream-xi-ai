@@ -1,0 +1,24 @@
+{
+  "name": "@dream-xi/circuit-breaker",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — Circuit breaker pattern for fault-tolerant LLM API calls: CLOSED/OPEN/HALF_OPEN state machine with failure threshold and recovery probes. Zero dependencies.",
+  "keywords": ["dream-xi", "circuit-breaker", "resilience", "fault-tolerance", "llm", "typescript"],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}
