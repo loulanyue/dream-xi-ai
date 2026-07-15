@@ -11,6 +11,28 @@
 
 ---
 
+## [3.9.0-alpha] - 2026-07-15
+
+> 🪟 上下文窗口赛季 — `@dream-xi/context-window` · Token 预算 · 优先级裁剪 · 智能混合策略
+
+### Added
+
+- **`packages/context-window/`**：LLM 上下文窗口管理器（新建包，零外部运行时依赖）
+  - **`ContextWindow`**：核心上下文管理类，维护有序消息列表并按 Token 预算自动裁剪。
+    - `add(message)` / `addAll(messages)`：追加消息，支持 `pinned`（锚定不删）和手动 `priority`（0–100）。
+    - `build()`：生成适合发送给 LLM 的消息列表，返回 `ContextBuildResult`（消息列表、已用 Token、预算、使用率、裁剪条数）。
+    - `clearHistory()`：清空非 pinned 消息，保留系统 prompt。
+    - `totalTokens` / `budget` / `isOverBudget`：运行时预算状态查询。
+  - **三种裁剪策略**：
+    - `fifo`：按插入顺序删除最旧的非 pinned 消息（简单但可能丢失关键上下文）。
+    - `priority`：按优先级从低到高删除（可精细控制重要消息的保留）。
+    - `smart`（默认）：保留 system/pinned + 最近 N 条（`smartKeepRecent`），删除中间历史，超出时降级为 FIFO。
+  - **`pinned` 锚定机制**：system prompt、关键指令可设置 `pinned: true`，所有策略均不删除。
+  - **内置 Token 估算器**：英文按空格分词 + CJK 字符 × 0.67 + 4 token 角色 overhead；支持通过 `countTokens` 替换为自定义实现（如 tiktoken）。
+  - **`ContextBuildResult`**：包含 `messages / usedTokens / budgetTokens / usageRatio / trimmedCount`，便于监控上下文压缩效果。
+
+---
+
 ## [3.8.0-alpha] - 2026-07-14
 
 > ⚡ 弹性容错赛季 — `@dream-xi/circuit-breaker` · 三态状态机 · 失败阈值 · 探针恢复 · 事件监听

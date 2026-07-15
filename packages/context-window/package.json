@@ -1,0 +1,31 @@
+{
+  "name": "@dream-xi/context-window",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — LLM context window manager: token budget control, message priority scoring and multi-strategy window trimming. Zero dependencies.",
+  "keywords": [
+    "dream-xi",
+    "context-window",
+    "token-budget",
+    "llm-context",
+    "message-trimming",
+    "typescript"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}
