@@ -11,6 +11,31 @@
 
 ---
 
+## [3.10.0-alpha] - 2026-07-16
+
+> 🔍 语义检索赛季 — `@dream-xi/embed` · 向量运算 · 余弦相似度 · 内存向量存储 · Top-K 近邻检索
+
+### Added
+
+- **`packages/embed/`**：文本嵌入向量工具库（新建包，零外部运行时依赖）
+  - **向量基础运算**：
+    - `dotProduct(a, b)`：向量点积，维度不一致自动抛出错误。
+    - `magnitude(v)`：L2 范数（欧氏长度）。
+    - `normalize(v)`：归一化向量（L2 范数 = 1），零向量安全处理。
+    - `cosineSimilarity(a, b)`：余弦相似度，范围 [-1, 1]，1 表示完全同向。
+    - `euclideanDistance(a, b)`：欧氏距离，值越小越相近。
+    - `add(a, b)`：逐元素向量加法。
+    - `mean(vectors)`：多向量均值（适合嵌入聚合，如 chunk 合并）。
+  - **`VectorStore<TMeta>`**：泛型内存向量存储。
+    - `add(id, vector, metadata)`：添加或更新向量条目（含自定义元数据）。
+    - `delete(id)` / `get(id)` / `has(id)` / `clear()`：完整 CRUD 支持。
+    - `search(query, options)`：Top-K 近邻检索，支持 `cosine`（余弦，默认）和 `euclidean`（欧氏距离）两种度量，可设置 `minScore` 过滤低相似度结果。
+    - `list()`：按插入时间顺序导出所有条目。
+  - **`Vector`**：只读浮点数数组类型（防止意外修改嵌入向量）。
+  - **`SearchResult`**：检索结果类型，含 `id / score / metadata / vector`。
+
+---
+
 ## [3.9.0-alpha] - 2026-07-15
 
 > 🪟 上下文窗口赛季 — `@dream-xi/context-window` · Token 预算 · 优先级裁剪 · 智能混合策略

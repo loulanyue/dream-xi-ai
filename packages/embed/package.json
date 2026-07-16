@@ -1,0 +1,33 @@
+{
+  "name": "@dream-xi/embed",
+  "version": "0.1.0-alpha",
+  "description": "Dream XI AI — Text embedding vector utilities: cosine similarity, dot product, normalization, in-memory vector store and top-K nearest neighbor search. Zero dependencies.",
+  "keywords": [
+    "dream-xi",
+    "embed",
+    "embedding",
+    "vector",
+    "cosine-similarity",
+    "vector-store",
+    "rag",
+    "typescript"
+  ],
+  "license": "Apache-2.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "typecheck": "tsc --noEmit",
+    "clean": "rimraf dist"
+  },
+  "devDependencies": {
+    "rimraf": "^5.0.0",
+    "typescript": "^5.6.0"
+  }
+}
