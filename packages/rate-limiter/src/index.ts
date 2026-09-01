@@ -64,9 +64,9 @@ export interface RateLimitHeaders {
  */
 export function toRateLimitHeaders(result: RateLimitResult): RateLimitHeaders {
   const headers: RateLimitHeaders = {
-    "RateLimit-Limit":     String(result.limit),
+    "RateLimit-Limit": String(result.limit),
     "RateLimit-Remaining": String(result.remaining),
-    "RateLimit-Reset":     String(Math.ceil(result.resetAt / 1000)),
+    "RateLimit-Reset": String(Math.ceil(result.resetAt / 1000)),
   };
   if (!result.allowed && result.retryAfterMs > 0) {
     headers["Retry-After"] = String(Math.ceil(result.retryAfterMs / 1000));
@@ -122,7 +122,7 @@ export class TokenBucketLimiter {
 
   constructor(options: TokenBucketOptions) {
     this.tokensPerMs = options.tokensPerSecond / 1000;
-    this.bucketSize  = options.bucketSize ?? options.tokensPerSecond * 10;
+    this.bucketSize = options.bucketSize ?? options.tokensPerSecond * 10;
 
     const cleanupMs = options.cleanupIntervalMs ?? 300_000;
     this.cleanupTimer = setInterval(() => this._cleanup(), cleanupMs);
@@ -148,17 +148,17 @@ export class TokenBucketLimiter {
 
     // 补充令牌
     const elapsed = now - state.lastRefillAt;
-    const refill   = elapsed * this.tokensPerMs;
-    state.tokens    = Math.min(this.bucketSize, state.tokens + refill);
+    const refill = elapsed * this.tokensPerMs;
+    state.tokens = Math.min(this.bucketSize, state.tokens + refill);
     state.lastRefillAt = now;
 
     if (state.tokens >= cost) {
       state.tokens -= cost;
       const resetAt = now + Math.ceil((this.bucketSize - state.tokens) / this.tokensPerMs);
       return {
-        allowed:      true,
-        remaining:    Math.floor(state.tokens),
-        limit:        this.bucketSize,
+        allowed: true,
+        remaining: Math.floor(state.tokens),
+        limit: this.bucketSize,
         resetAt,
         retryAfterMs: 0,
       };
@@ -167,10 +167,10 @@ export class TokenBucketLimiter {
     // 令牌不足
     const msUntilEnough = Math.ceil((cost - state.tokens) / this.tokensPerMs);
     return {
-      allowed:      false,
-      remaining:    0,
-      limit:        this.bucketSize,
-      resetAt:      now + msUntilEnough,
+      allowed: false,
+      remaining: 0,
+      limit: this.bucketSize,
+      resetAt: now + msUntilEnough,
       retryAfterMs: msUntilEnough,
     };
   }
@@ -255,7 +255,7 @@ export class SlidingWindowLimiter {
   private cleanupTimer: ReturnType<typeof setInterval> | null = null;
 
   constructor(options: SlidingWindowOptions) {
-    this.windowMs    = options.windowMs;
+    this.windowMs = options.windowMs;
     this.maxRequests = options.maxRequests;
 
     const cleanupMs = options.cleanupIntervalMs ?? options.windowMs * 2;
@@ -270,7 +270,7 @@ export class SlidingWindowLimiter {
    * @param key 限制维度
    */
   check(key: string): RateLimitResult {
-    const now        = Date.now();
+    const now = Date.now();
     const windowStart = now - this.windowMs;
 
     let state = this.windows.get(key);
@@ -283,25 +283,24 @@ export class SlidingWindowLimiter {
     state.timestamps = state.timestamps.filter((t) => t > windowStart);
 
     const count = state.timestamps.length;
-    const resetAt = state.timestamps.length > 0
-      ? state.timestamps[0]! + this.windowMs
-      : now + this.windowMs;
+    const resetAt =
+      state.timestamps.length > 0 ? state.timestamps[0]! + this.windowMs : now + this.windowMs;
 
     if (count < this.maxRequests) {
       state.timestamps.push(now);
       return {
-        allowed:      true,
-        remaining:    this.maxRequests - count - 1,
-        limit:        this.maxRequests,
+        allowed: true,
+        remaining: this.maxRequests - count - 1,
+        limit: this.maxRequests,
         resetAt,
         retryAfterMs: 0,
       };
     }
 
     return {
-      allowed:      false,
-      remaining:    0,
-      limit:        this.maxRequests,
+      allowed: false,
+      remaining: 0,
+      limit: this.maxRequests,
       resetAt,
       retryAfterMs: Math.max(0, resetAt - now),
     };
@@ -345,7 +344,7 @@ export class SlidingWindowLimiter {
  * POST /api/chat 速率限制（每用户每分钟 20 次）
  */
 export const chatRateLimiter = new SlidingWindowLimiter({
-  windowMs:    60_000,
+  windowMs: 60_000,
   maxRequests: 20,
 });
 
@@ -355,13 +354,13 @@ export const chatRateLimiter = new SlidingWindowLimiter({
  */
 export const llmTokenBucket = new TokenBucketLimiter({
   tokensPerSecond: 1,
-  bucketSize:      3,
+  bucketSize: 3,
 });
 
 /**
  * GET /health 健康检查限制（每 IP 每分钟 60 次）
  */
 export const healthRateLimiter = new SlidingWindowLimiter({
-  windowMs:    60_000,
+  windowMs: 60_000,
   maxRequests: 60,
 });

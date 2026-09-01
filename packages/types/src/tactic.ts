@@ -26,13 +26,13 @@ export type SemVer = `${number}.${number}.${number}`;
 
 /** 战术分类 */
 export type TacticCategory =
-  | "development"   // 开发战术：TDD、重构、性能优化
-  | "review"        // 审查战术：代码审查、安全审查、架构审查
-  | "design"        // 设计战术：UI 设计、系统设计、API 设计
-  | "debugging"     // 调试战术：错误诊断、性能分析
+  | "development" // 开发战术：TDD、重构、性能优化
+  | "review" // 审查战术：代码审查、安全审查、架构审查
+  | "design" // 设计战术：UI 设计、系统设计、API 设计
+  | "debugging" // 调试战术：错误诊断、性能分析
   | "documentation" // 文档战术：技术写作、API 文档
   | "collaboration" // 协作战术：需求分析、技术评审
-  | "ops";          // 运维战术：部署、监控、故障处理
+  | "ops"; // 运维战术：部署、监控、故障处理
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 战术触发条件（Trigger）

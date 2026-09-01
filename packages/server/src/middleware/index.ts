@@ -35,7 +35,7 @@ export function requestLogger(req: RequestWithId, res: ServerResponse, next: () 
   req.requestId = generateRequestId();
   req.startTime = Date.now();
 
-  const { method, url } = req;
+  const { method: _method, url: _url } = req;
 
   res.on("finish", () => {
     const _duration = Date.now() - req.startTime;

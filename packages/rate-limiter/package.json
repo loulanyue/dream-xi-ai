@@ -2,7 +2,14 @@
   "name": "@dream-xi/rate-limiter",
   "version": "0.1.0-alpha",
   "description": "Dream XI AI — Token bucket & sliding window rate limiter for API endpoint protection. Zero dependencies.",
-  "keywords": ["dream-xi", "rate-limiter", "throttle", "token-bucket", "sliding-window", "typescript"],
+  "keywords": [
+    "dream-xi",
+    "rate-limiter",
+    "throttle",
+    "token-bucket",
+    "sliding-window",
+    "typescript"
+  ],
   "license": "Apache-2.0",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

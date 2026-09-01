@@ -25,8 +25,8 @@ export type ThreadId = string;
 
 /** 消息发送方类型 */
 export type MessageSource =
-  | "coach"   // 主教练（人类用户）
-  | "player"  // 球员（AI Agent）
+  | "coach" // 主教练（人类用户）
+  | "player" // 球员（AI Agent）
   | "system"; // 系统（平台层自动生成）
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -35,12 +35,12 @@ export type MessageSource =
 
 /** 消息类型 */
 export type MessageKind =
-  | "chat"        // 普通对话消息
-  | "handoff"     // 结构化交接消息（Structured Handoff）
-  | "review"      // 代码审查消息
-  | "gate-check"  // 门禁检查结果
-  | "system"      // 系统通知
-  | "summary";    // 赛后总结
+  | "chat" // 普通对话消息
+  | "handoff" // 结构化交接消息（Structured Handoff）
+  | "review" // 代码审查消息
+  | "gate-check" // 门禁检查结果
+  | "system" // 系统通知
+  | "summary"; // 赛后总结
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 消息内容块（Content Block）

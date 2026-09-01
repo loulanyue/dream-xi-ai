@@ -13,9 +13,9 @@
  * @module
  */
 
-import type { PlayerId } from "./player.js";
-import type { MessageId, ThreadId } from "./message.js";
 import type { MemoryId, MemoryLayer } from "./memory.js";
+import type { MessageId, ThreadId } from "./message.js";
+import type { PlayerId } from "./player.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 基础事件结构
@@ -56,34 +56,34 @@ export interface DreamXiEvent {
  */
 export type EventType =
   // ── 消息事件 ────────────────────────────────────────────────
-  | "message.send.requested"     // 用户/系统发起新消息
-  | "message.route.resolved"     // 路由器已确定目标球员
-  | "message.deliver.started"    // 开始向目标球员投递
-  | "message.deliver.completed"  // 投递成功（球员已接收）
-  | "message.deliver.failed"     // 投递失败（含错误原因）
-  | "message.reply.received"     // 球员回复已到达
+  | "message.send.requested" // 用户/系统发起新消息
+  | "message.route.resolved" // 路由器已确定目标球员
+  | "message.deliver.started" // 开始向目标球员投递
+  | "message.deliver.completed" // 投递成功（球员已接收）
+  | "message.deliver.failed" // 投递失败（含错误原因）
+  | "message.reply.received" // 球员回复已到达
   // ── 线程事件 ────────────────────────────────────────────────
-  | "thread.created"             // 新线程创建
-  | "thread.status.changed"      // 线程状态变更（open/closed/archived）
+  | "thread.created" // 新线程创建
+  | "thread.status.changed" // 线程状态变更（open/closed/archived）
   // ── 记忆事件 ────────────────────────────────────────────────
-  | "memory.write.requested"     // 请求写入记忆
-  | "memory.write.completed"     // 记忆写入成功
-  | "memory.write.failed"        // 记忆写入失败
-  | "memory.evict.completed"     // 记忆条目被逐出（容量限制）
-  | "memory.search.completed"    // 语义搜索完成
+  | "memory.write.requested" // 请求写入记忆
+  | "memory.write.completed" // 记忆写入成功
+  | "memory.write.failed" // 记忆写入失败
+  | "memory.evict.completed" // 记忆条目被逐出（容量限制）
+  | "memory.search.completed" // 语义搜索完成
   // ── 路由事件 ────────────────────────────────────────────────
-  | "router.fallback.triggered"  // 路由回退到默认球员（Leo）
-  | "router.mention.parsed"      // 解析到显式 @mention
-  | "router.intent.inferred"     // 意图推断完成
+  | "router.fallback.triggered" // 路由回退到默认球员（Leo）
+  | "router.mention.parsed" // 解析到显式 @mention
+  | "router.intent.inferred" // 意图推断完成
   // ── 公平竞技事件 ────────────────────────────────────────────
   | "fairplay.violation.detected" // 检测到公平竞技违规
-  | "fairplay.violation.blocked"  // 违规内容已被拦截
+  | "fairplay.violation.blocked" // 违规内容已被拦截
   // ── 系统事件 ────────────────────────────────────────────────
-  | "system.server.started"      // HTTP 服务器启动成功
-  | "system.server.stopped"      // HTTP 服务器停止
-  | "system.config.loaded"       // 配置加载完成
-  | "system.config.invalid"      // 配置验证失败
-  | "system.health.checked";     // 健康检查触发
+  | "system.server.started" // HTTP 服务器启动成功
+  | "system.server.stopped" // HTTP 服务器停止
+  | "system.config.loaded" // 配置加载完成
+  | "system.config.invalid" // 配置验证失败
+  | "system.health.checked"; // 健康检查触发
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 消息事件
@@ -412,7 +412,7 @@ export interface EventFilter {
 
 /** 事件处理回调函数 */
 export type EventHandler<T extends AnyDreamXiEvent = AnyDreamXiEvent> = (
-  event: T
+  event: T,
 ) => void | Promise<void>;
 
 /** 事件订阅令牌（用于取消订阅） */
@@ -459,7 +459,7 @@ export interface EventBus {
    */
   subscribe<T extends AnyDreamXiEvent>(
     filter: EventFilter,
-    handler: EventHandler<T>
+    handler: EventHandler<T>,
   ): EventSubscription;
 
   /**
@@ -468,20 +468,14 @@ export interface EventBus {
    * @param handler 事件处理函数
    * @returns 可取消的订阅令牌
    */
-  once<T extends AnyDreamXiEvent>(
-    filter: EventFilter,
-    handler: EventHandler<T>
-  ): EventSubscription;
+  once<T extends AnyDreamXiEvent>(filter: EventFilter, handler: EventHandler<T>): EventSubscription;
 
   /**
    * 等待某个事件类型触发（Promise 风格）。
    * @param type 事件类型
    * @param timeoutMs 超时时间（毫秒），超时后 reject
    */
-  waitFor<T extends AnyDreamXiEvent>(
-    type: T["type"],
-    timeoutMs?: number
-  ): Promise<T>;
+  waitFor<T extends AnyDreamXiEvent>(type: T["type"], timeoutMs?: number): Promise<T>;
 
   /**
    * 获取所有已注册订阅者数量（调试用）。
@@ -508,22 +502,12 @@ export interface EventBus {
  * ```
  */
 export interface EventFactory {
-  serverStarted(
-    payload: SystemServerStartedEvent["payload"]
-  ): SystemServerStartedEvent;
-  serverStopped(
-    payload: SystemServerStoppedEvent["payload"]
-  ): SystemServerStoppedEvent;
-  configLoaded(
-    payload: SystemConfigLoadedEvent["payload"]
-  ): SystemConfigLoadedEvent;
-  messageRouteResolved(
-    payload: MessageRouteResolvedEvent["payload"]
-  ): MessageRouteResolvedEvent;
-  memoryWriteCompleted(
-    payload: MemoryWriteCompletedEvent["payload"]
-  ): MemoryWriteCompletedEvent;
+  serverStarted(payload: SystemServerStartedEvent["payload"]): SystemServerStartedEvent;
+  serverStopped(payload: SystemServerStoppedEvent["payload"]): SystemServerStoppedEvent;
+  configLoaded(payload: SystemConfigLoadedEvent["payload"]): SystemConfigLoadedEvent;
+  messageRouteResolved(payload: MessageRouteResolvedEvent["payload"]): MessageRouteResolvedEvent;
+  memoryWriteCompleted(payload: MemoryWriteCompletedEvent["payload"]): MemoryWriteCompletedEvent;
   fairPlayViolationDetected(
-    payload: FairPlayViolationDetectedEvent["payload"]
+    payload: FairPlayViolationDetectedEvent["payload"],
   ): FairPlayViolationDetectedEvent;
 }

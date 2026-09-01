@@ -5,8 +5,8 @@
  * 参考：SETUP.md、.env.example
  */
 
-import type { ModelId, ModelProvider, PlayerId } from "./player.js";
 import type { MemoryConfig } from "./memory.js";
+import type { ModelId, ModelProvider, PlayerId } from "./player.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 服务器配置（Server Config）

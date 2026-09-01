@@ -9,8 +9,8 @@
  * 参考：docs/ARCHITECTURE.md § ADR-002 持久身份策略
  */
 
-import type { PlayerId } from "./player.js";
 import type { ThreadId } from "./message.js";
+import type { PlayerId } from "./player.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 记忆 ID
@@ -25,8 +25,8 @@ export type MemoryId = string;
 
 /** 记忆层级，对应三层记忆架构 */
 export type MemoryLayer =
-  | "working"   // 工作记忆：当前线程，完整上下文
-  | "episodic"  // 情景记忆：跨线程摘要，Redis 存储
+  | "working" // 工作记忆：当前线程，完整上下文
+  | "episodic" // 情景记忆：跨线程摘要，Redis 存储
   | "semantic"; // 语义记忆：持久经验，Markdown 文档
 
 // ─────────────────────────────────────────────────────────────────────────────

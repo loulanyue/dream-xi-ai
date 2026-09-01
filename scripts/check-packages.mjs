@@ -19,37 +19,37 @@
  *   pnpm gate 中包含此检查
  */
 
-import { readFileSync, existsSync, readdirSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
-const ROOT      = resolve(__dirname, "..");
-const PACKAGES  = join(ROOT, "packages");
-const FIX_MODE  = process.argv.includes("--fix");
+const ROOT = resolve(__dirname, "..");
+const PACKAGES = join(ROOT, "packages");
+const FIX_MODE = process.argv.includes("--fix");
 
 // ANSI 颜色
 const R = "\x1b[31m"; // 红
 const G = "\x1b[32m"; // 绿
 const Y = "\x1b[33m"; // 黄
 const B = "\x1b[36m"; // 青
-const D = "\x1b[2m";  // 暗
-const X = "\x1b[0m";  // 重置
+const D = "\x1b[2m"; // 暗
+const X = "\x1b[0m"; // 重置
 
-let errorCount  = 0;
-let warnCount   = 0;
-let passCount   = 0;
+let errorCount = 0;
+let warnCount = 0;
+let passCount = 0;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 工具函数
 // ─────────────────────────────────────────────────────────────────────────────
 
-function error(pkg, msg) {
+function error(_pkg, msg) {
   console.error(`  ${R}✗ ERROR${X}  ${msg}`);
   errorCount++;
 }
 
-function warn(pkg, msg) {
+function warn(_pkg, msg) {
   console.warn(`  ${Y}⚠ WARN${X}   ${msg}`);
   warnCount++;
 }
@@ -73,18 +73,29 @@ function readJson(path) {
 
 const REQUIRED_FIELDS = ["name", "version", "description", "license"];
 const SEMVER_RE = /^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?$/;
-const DREAM_XI_DEPS = ["@dream-xi/types", "@dream-xi/config", "@dream-xi/memory",
-  "@dream-xi/tactic", "@dream-xi/router", "@dream-xi/fair-play", "@dream-xi/server",
-  "@dream-xi/event-bus", "@dream-xi/logger", "@dream-xi/validator", "@dream-xi/retry",
-  "@dream-xi/rate-limiter", "@dream-xi/cache"];
+const DREAM_XI_DEPS = [
+  "@dream-xi/types",
+  "@dream-xi/config",
+  "@dream-xi/memory",
+  "@dream-xi/tactic",
+  "@dream-xi/router",
+  "@dream-xi/fair-play",
+  "@dream-xi/server",
+  "@dream-xi/event-bus",
+  "@dream-xi/logger",
+  "@dream-xi/validator",
+  "@dream-xi/retry",
+  "@dream-xi/rate-limiter",
+  "@dream-xi/cache",
+];
 
 function checkPackage(pkgDir) {
-  const pkgName    = pkgDir.split("/").pop();
+  const pkgName = pkgDir.split("/").pop();
   const pkgJsonPath = join(pkgDir, "package.json");
   const tsConfigPath = join(pkgDir, "tsconfig.json");
   const srcIndexPath = join(pkgDir, "src", "index.ts");
 
-  console.log(`\n${B}▸ ${pkgName}${X} ${D}(${pkgDir.replace(ROOT + "/", "")})${X}`);
+  console.log(`\n${B}▸ ${pkgName}${X} ${D}(${pkgDir.replace(`${ROOT}/`, "")})${X}`);
 
   // 1. package.json 存在
   const pkg = readJson(pkgJsonPath);
@@ -111,7 +122,7 @@ function checkPackage(pkgDir) {
   if (!pkg.exports) {
     warn(pkgName, "package.json 缺少 exports 字段（推荐添加以支持 ESM）");
   } else {
-    pass(`exports 字段已配置`);
+    pass("exports 字段已配置");
   }
 
   // 5. 内部依赖使用 workspace:*

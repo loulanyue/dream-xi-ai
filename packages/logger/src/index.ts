@@ -29,7 +29,7 @@
  * @module
  */
 
-import { stdout, stderr } from "node:process";
+import { stderr, stdout } from "node:process";
 import type { Writable } from "node:stream";
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -122,16 +122,16 @@ export interface LoggerOptions {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const COLORS: Record<LogLevel, string> = {
-  trace: "\x1b[90m",  // 灰色
-  debug: "\x1b[36m",  // 青色
-  info:  "\x1b[32m",  // 绿色
-  warn:  "\x1b[33m",  // 黄色
-  error: "\x1b[31m",  // 红色
-  fatal: "\x1b[35m",  // 紫色
+  trace: "\x1b[90m", // 灰色
+  debug: "\x1b[36m", // 青色
+  info: "\x1b[32m", // 绿色
+  warn: "\x1b[33m", // 黄色
+  error: "\x1b[31m", // 红色
+  fatal: "\x1b[35m", // 紫色
 };
 const RESET = "\x1b[0m";
-const DIM   = "\x1b[2m";
-const BOLD  = "\x1b[1m";
+const DIM = "\x1b[2m";
+const BOLD = "\x1b[1m";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Error 序列化
@@ -169,11 +169,11 @@ export class Logger {
   private readonly bindings: Record<string, unknown>;
 
   constructor(options: Required<LoggerOptions>) {
-    this.name     = options.name;
+    this.name = options.name;
     this.minLevel = LOG_LEVELS[options.level];
-    this.format   = options.format;
-    this.out      = options.stdout;
-    this.err      = options.stderr;
+    this.format = options.format;
+    this.out = options.stdout;
+    this.err = options.stderr;
     this.bindings = options.bindings;
   }
 
@@ -256,17 +256,17 @@ export class Logger {
     if (LOG_LEVELS[level] < this.minLevel) return;
 
     const isError = LOG_LEVELS[level] >= LOG_LEVELS.warn;
-    const stream  = isError ? this.err : this.out;
+    const stream = isError ? this.err : this.out;
 
     let fields: Record<string, unknown>;
     let message: string;
 
     if (typeof objOrMsg === "string") {
-      fields  = {};
+      fields = {};
       message = objOrMsg;
     } else {
       const { err: errField, ...rest } = objOrMsg;
-      fields  = rest;
+      fields = rest;
       message = msg ?? "";
       if (errField !== undefined) {
         fields["err"] = serializeError(errField);
@@ -274,33 +274,30 @@ export class Logger {
     }
 
     const record: LogRecord = {
-      time:  new Date().toISOString(),
+      time: new Date().toISOString(),
       level: LOG_LEVELS[level],
-      name:  this.name,
-      msg:   message,
+      name: this.name,
+      msg: message,
       ...this.bindings,
       ...fields,
     };
 
-    const line = this.format === "pretty"
-      ? this._formatPretty(level, record)
-      : JSON.stringify(record);
+    const line =
+      this.format === "pretty" ? this._formatPretty(level, record) : JSON.stringify(record);
 
-    stream.write(line + "\n");
+    stream.write(`${line}\n`);
   }
 
   private _formatPretty(level: LogLevel, record: LogRecord): string {
     const color = COLORS[level];
-    const time  = DIM + record.time.replace("T", " ").replace("Z", "") + RESET;
-    const lvl   = color + BOLD + level.toUpperCase().padEnd(5) + RESET;
-    const name  = DIM + `[${record.name}]` + RESET;
-    const msg   = record.msg;
+    const time = DIM + record.time.replace("T", " ").replace("Z", "") + RESET;
+    const lvl = color + BOLD + level.toUpperCase().padEnd(5) + RESET;
+    const name = `${DIM}[${record.name}]${RESET}`;
+    const msg = record.msg;
 
     // 额外字段（排除基础字段）
     const { time: _t, level: _l, name: _n, msg: _m, ...extra } = record;
-    const extraStr = Object.keys(extra).length > 0
-      ? " " + DIM + JSON.stringify(extra) + RESET
-      : "";
+    const extraStr = Object.keys(extra).length > 0 ? ` ${DIM}${JSON.stringify(extra)}${RESET}` : "";
 
     return `${time} ${lvl} ${name} ${msg}${extraStr}`;
   }
@@ -336,11 +333,11 @@ export function createLogger(options: LoggerOptions = {}): Logger {
   const isProd = process.env["NODE_ENV"] === "production";
 
   return new Logger({
-    name:     options.name    ?? "dream-xi",
-    level:    options.level   ?? (isProd ? "info" : "debug"),
-    format:   options.format  ?? (isProd ? "json" : "pretty"),
-    stdout:   options.stdout  ?? stdout,
-    stderr:   options.stderr  ?? stderr,
+    name: options.name ?? "dream-xi",
+    level: options.level ?? (isProd ? "info" : "debug"),
+    format: options.format ?? (isProd ? "json" : "pretty"),
+    stdout: options.stdout ?? stdout,
+    stderr: options.stderr ?? stderr,
     bindings: options.bindings ?? {},
   });
 }
@@ -377,20 +374,17 @@ export interface RequestLogEntry {
  * ```
  */
 export function logRequest(logger: Logger, entry: RequestLogEntry): void {
-  const level: LogLevel = entry.statusCode >= 500
-    ? "error"
-    : entry.statusCode >= 400
-    ? "warn"
-    : "info";
+  const level: LogLevel =
+    entry.statusCode >= 500 ? "error" : entry.statusCode >= 400 ? "warn" : "info";
 
   logger[level](
     {
-      requestId:     entry.requestId,
-      method:        entry.method,
-      url:           entry.url,
-      statusCode:    entry.statusCode,
-      durationMs:    entry.durationMs,
-      ...(entry.userAgent     ? { userAgent: entry.userAgent }         : {}),
+      requestId: entry.requestId,
+      method: entry.method,
+      url: entry.url,
+      statusCode: entry.statusCode,
+      durationMs: entry.durationMs,
+      ...(entry.userAgent ? { userAgent: entry.userAgent } : {}),
       ...(entry.contentLength ? { contentLength: entry.contentLength } : {}),
     },
     `${entry.method} ${entry.url} ${entry.statusCode} (${entry.durationMs}ms)`,

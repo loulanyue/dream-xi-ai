@@ -20,8 +20,6 @@
     "outDir": "dist",
     "rootDir": "src",
 
-
-
     // 互操作
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,

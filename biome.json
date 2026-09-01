@@ -7,15 +7,7 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": [
-      "node_modules",
-      "dist",
-      "build",
-      ".next",
-      "coverage",
-      "*.min.js",
-      "*.min.css"
-    ]
+    "ignore": ["node_modules", "dist", "build", ".next", "coverage", "*.min.js", "*.min.css"]
   },
   "formatter": {
     "enabled": true,
@@ -53,6 +45,9 @@
       },
       "performance": {
         "noDelete": "warn"
+      },
+      "complexity": {
+        "useLiteralKeys": "off"
       }
     }
   },
@@ -71,7 +66,7 @@
   },
   "overrides": [
     {
-      "include": ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**"],
+      "include": ["**/*.test.ts", "**/*.spec.ts", "**/__tests__/**", "scripts/**", "**/*.mjs"],
       "linter": {
         "rules": {
           "suspicious": {

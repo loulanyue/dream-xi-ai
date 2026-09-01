@@ -32,4 +32,3 @@ export function createDefaultRegistry(): TacticRegistry {
   registry.registerAll(BUILTIN_TACTICS);
   return registry;
 }
-

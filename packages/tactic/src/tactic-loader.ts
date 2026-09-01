@@ -8,12 +8,7 @@
  * 参考：docs/GLOSSARY.md — 战术手册 (Playbook)
  */
 
-import type {
-  PlayerId,
-  TacticDefinition,
-  TacticId,
-  TacticLoadState,
-} from "@dream-xi/types";
+import type { PlayerId, TacticDefinition, TacticId, TacticLoadState } from "@dream-xi/types";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 战术注册表
@@ -94,9 +89,7 @@ export function detectTriggers(text: string, registry: TacticRegistry): TacticId
     }
   }
 
-  return scores
-    .sort((a, b) => b.score - a.score)
-    .map((s) => s.id);
+  return scores.sort((a, b) => b.score - a.score).map((s) => s.id);
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

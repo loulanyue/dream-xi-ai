@@ -49,18 +49,18 @@
 
 /** 探针类型 */
 export const ProbeType = {
-  Liveness:  "liveness",
+  Liveness: "liveness",
   Readiness: "readiness",
-  Startup:   "startup",
+  Startup: "startup",
 } as const;
 
 export type ProbeType = (typeof ProbeType)[keyof typeof ProbeType];
 
 /** 检查器重要级别 */
 export type CheckerCriticality =
-  | "critical"   // 关键：失败则整体 unhealthy（liveness 失败 → 重启）
-  | "degraded"   // 降级：失败则整体 degraded（readiness 失败 → 摘流量）
-  | "optional";  // 可选：失败只记录，不影响整体状态
+  | "critical" // 关键：失败则整体 unhealthy（liveness 失败 → 重启）
+  | "degraded" // 降级：失败则整体 degraded（readiness 失败 → 摘流量）
+  | "optional"; // 可选：失败只记录，不影响整体状态
 
 /** 单项检查结果状态 */
 export type CheckStatus = "pass" | "warn" | "fail";
@@ -148,8 +148,14 @@ function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise
       reject(new Error(`健康检查 "${label}" 超时（限制 ${ms}ms）`));
     }, ms);
     promise.then(
-      (v) => { clearTimeout(timer); resolve(v); },
-      (e: unknown) => { clearTimeout(timer); reject(e); },
+      (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      (e: unknown) => {
+        clearTimeout(timer);
+        reject(e);
+      },
     );
   });
 }
@@ -178,7 +184,7 @@ export class HealthRegistry {
   private readonly serviceVersion: string;
 
   constructor(options: HealthRegistryOptions) {
-    this.serviceName    = options.name;
+    this.serviceName = options.name;
     this.serviceVersion = options.version;
   }
 
@@ -201,19 +207,21 @@ export class HealthRegistry {
    * @param options.heapUsedThresholdMb heap 使用超过此值时降级（默认 512MB）
    * @param options.probe 适用探针（默认 liveness + readiness）
    */
-  registerMemoryCheck(options: {
-    heapUsedThresholdMb?: number;
-    probe?: ProbeType | ProbeType[];
-  } = {}): this {
+  registerMemoryCheck(
+    options: {
+      heapUsedThresholdMb?: number;
+      probe?: ProbeType | ProbeType[];
+    } = {},
+  ): this {
     const threshold = options.heapUsedThresholdMb ?? 512;
-    const probe     = options.probe ?? [ProbeType.Liveness, ProbeType.Readiness];
+    const probe = options.probe ?? [ProbeType.Liveness, ProbeType.Readiness];
 
     return this.register({
-      name:        "memory",
+      name: "memory",
       probe,
       criticality: "degraded",
       description: `Node.js heap 使用率检查（阈值 ${threshold}MB）`,
-      timeoutMs:   1000,
+      timeoutMs: 1000,
       check: () => {
         const mem = process.memoryUsage();
         const heapUsedMb = Math.round(mem.heapUsed / 1024 / 1024);
@@ -238,11 +246,11 @@ export class HealthRegistry {
     const minUptimeMs = options.minUptimeMs ?? 5000;
 
     return this.register({
-      name:        "startup-ready",
-      probe:       ProbeType.Startup,
+      name: "startup-ready",
+      probe: ProbeType.Startup,
       criticality: "critical",
       description: `服务启动检查（最少运行 ${minUptimeMs}ms）`,
-      timeoutMs:   1000,
+      timeoutMs: 1000,
       check: () => {
         const uptimeMs = Date.now() - this.startedAt;
         if (uptimeMs < minUptimeMs) {
@@ -293,51 +301,47 @@ export class HealthRegistry {
     const mem = process.memoryUsage();
 
     return {
-      service:       this.serviceName,
-      version:       this.serviceVersion,
-      status:        overallStatus,
+      service: this.serviceName,
+      version: this.serviceVersion,
+      status: overallStatus,
       probe,
-      checks:        results,
-      timestamp:     new Date().toISOString(),
-      durationMs:    Date.now() - reportStart,
+      checks: results,
+      timestamp: new Date().toISOString(),
+      durationMs: Date.now() - reportStart,
       uptimeSeconds: Math.floor((Date.now() - this.startedAt) / 1000),
       memory: {
-        heapUsedMb:  Math.round(mem.heapUsed  / 1024 / 1024),
+        heapUsedMb: Math.round(mem.heapUsed / 1024 / 1024),
         heapTotalMb: Math.round(mem.heapTotal / 1024 / 1024),
-        rssMb:       Math.round(mem.rss       / 1024 / 1024),
-        externalMb:  Math.round(mem.external  / 1024 / 1024),
+        rssMb: Math.round(mem.rss / 1024 / 1024),
+        externalMb: Math.round(mem.external / 1024 / 1024),
       },
     };
   }
 
   private async _runChecker(checker: CheckerConfig): Promise<CheckResult> {
-    const start     = Date.now();
+    const start = Date.now();
     const timeoutMs = checker.timeoutMs ?? 5000;
 
     try {
-      const details = await withTimeout(
-        Promise.resolve(checker.check()),
-        timeoutMs,
-        checker.name,
-      );
+      const details = await withTimeout(Promise.resolve(checker.check()), timeoutMs, checker.name);
 
       return {
-        name:        checker.name,
-        status:      "pass",
+        name: checker.name,
+        status: "pass",
         criticality: checker.criticality,
-        durationMs:  Date.now() - start,
-        details:     details as Record<string, unknown>,
-        timestamp:   new Date().toISOString(),
+        durationMs: Date.now() - start,
+        details: details as Record<string, unknown>,
+        timestamp: new Date().toISOString(),
       };
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       return {
-        name:        checker.name,
-        status:      "fail",
+        name: checker.name,
+        status: "fail",
         criticality: checker.criticality,
-        durationMs:  Date.now() - start,
-        error:       msg,
-        timestamp:   new Date().toISOString(),
+        durationMs: Date.now() - start,
+        error: msg,
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -389,20 +393,17 @@ import type { IncomingMessage, ServerResponse } from "node:http";
  * ```
  */
 export function createHealthHandlers(registry: HealthRegistry): {
-  handleLive:    (req: IncomingMessage, res: ServerResponse) => Promise<void>;
-  handleReady:   (req: IncomingMessage, res: ServerResponse) => Promise<void>;
+  handleLive: (req: IncomingMessage, res: ServerResponse) => Promise<void>;
+  handleReady: (req: IncomingMessage, res: ServerResponse) => Promise<void>;
   handleStartup: (req: IncomingMessage, res: ServerResponse) => Promise<void>;
 } {
-  async function respond(
-    res: ServerResponse,
-    runFn: () => Promise<HealthReport>,
-  ): Promise<void> {
+  async function respond(res: ServerResponse, runFn: () => Promise<HealthReport>): Promise<void> {
     try {
-      const report  = await runFn();
-      const status  = report.status === "unhealthy" ? 503 : 200;
-      const body    = JSON.stringify(report, null, 2);
+      const report = await runFn();
+      const status = report.status === "unhealthy" ? 503 : 200;
+      const body = JSON.stringify(report, null, 2);
       res.writeHead(status, {
-        "Content-Type":  "application/json; charset=utf-8",
+        "Content-Type": "application/json; charset=utf-8",
         "Cache-Control": "no-cache, no-store",
       });
       res.end(body);
@@ -414,8 +415,8 @@ export function createHealthHandlers(registry: HealthRegistry): {
   }
 
   return {
-    handleLive:    (_req, res) => respond(res, () => registry.runLiveness()),
-    handleReady:   (_req, res) => respond(res, () => registry.runReadiness()),
+    handleLive: (_req, res) => respond(res, () => registry.runLiveness()),
+    handleReady: (_req, res) => respond(res, () => registry.runReadiness()),
     handleStartup: (_req, res) => respond(res, () => registry.runStartup()),
   };
 }
@@ -452,7 +453,7 @@ export function createDreamXiRegistry(options: {
   startupUptimeMs?: number;
 }): HealthRegistry {
   const registry = new HealthRegistry({
-    name:    "dream-xi-ai",
+    name: "dream-xi-ai",
     version: options.version,
   });
 

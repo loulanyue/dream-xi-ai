@@ -123,9 +123,9 @@ export class Cache<V> {
   private _evictedByLru = 0;
 
   constructor(options: CacheOptions<V> = {}) {
-    this.maxSize      = options.maxSize      ?? 1000;
+    this.maxSize = options.maxSize ?? 1000;
     this.defaultTtlMs = options.defaultTtlMs ?? null;
-    this.callbacks    = options.callbacks    ?? {};
+    this.callbacks = options.callbacks ?? {};
 
     const cleanupMs = options.cleanupIntervalMs ?? 60_000;
     this.cleanupTimer = setInterval(() => this._sweepExpired(), cleanupMs);
@@ -174,8 +174,8 @@ export class Cache<V> {
     if (this.store.has(key)) {
       const existing = this.store.get(key)!;
       const resolvedTtl = ttlMs !== undefined ? ttlMs : this.defaultTtlMs;
-      existing.value        = value;
-      existing.expiresAt    = resolvedTtl !== null ? Date.now() + resolvedTtl : null;
+      existing.value = value;
+      existing.expiresAt = resolvedTtl !== null ? Date.now() + resolvedTtl : null;
       existing.lastAccessedAt = Date.now();
       this.callbacks.onSet?.(key, value, resolvedTtl);
       return;
@@ -190,10 +190,10 @@ export class Cache<V> {
     const now = Date.now();
     this.store.set(key, {
       value,
-      expiresAt:      resolvedTtl !== null ? now + resolvedTtl : null,
+      expiresAt: resolvedTtl !== null ? now + resolvedTtl : null,
       lastAccessedAt: now,
-      createdAt:      now,
-      hits:           0,
+      createdAt: now,
+      hits: 0,
     });
     this.callbacks.onSet?.(key, value, resolvedTtl);
   }
@@ -213,11 +213,7 @@ export class Cache<V> {
    * );
    * ```
    */
-  async getOrSet(
-    key: string,
-    loader: () => V | Promise<V>,
-    ttlMs?: number | null,
-  ): Promise<V> {
+  async getOrSet(key: string, loader: () => V | Promise<V>, ttlMs?: number | null): Promise<V> {
     const cached = this.get(key);
     if (cached !== undefined) return cached;
 
@@ -274,13 +270,13 @@ export class Cache<V> {
   stats(): CacheStats {
     const total = this._hits + this._misses;
     return {
-      size:          this.store.size,
-      maxSize:       this.maxSize,
-      hits:          this._hits,
-      misses:        this._misses,
-      hitRate:       total === 0 ? 0 : this._hits / total,
-      evictedByTtl:  this._evictedByTtl,
-      evictedByLru:  this._evictedByLru,
+      size: this.store.size,
+      maxSize: this.maxSize,
+      hits: this._hits,
+      misses: this._misses,
+      hitRate: total === 0 ? 0 : this._hits / total,
+      evictedByTtl: this._evictedByTtl,
+      evictedByLru: this._evictedByLru,
     };
   }
 
@@ -306,11 +302,11 @@ export class Cache<V> {
   private _evictLru(): void {
     // 找到最久未访问的 key
     let oldestKey = "";
-    let oldestTime = Infinity;
+    let oldestTime = Number.POSITIVE_INFINITY;
     for (const [key, entry] of this.store) {
       if (entry.lastAccessedAt < oldestTime) {
         oldestTime = entry.lastAccessedAt;
-        oldestKey  = key;
+        oldestKey = key;
       }
     }
     if (oldestKey !== "") {
@@ -353,18 +349,18 @@ export function createCache<V>(options?: CacheOptions<V>): Cache<V> {
 
 /** 战术配置缓存（最多 200 条，10 分钟 TTL） */
 export const tacticCache = createCache<unknown>({
-  maxSize:      200,
+  maxSize: 200,
   defaultTtlMs: 10 * 60 * 1000,
 });
 
 /** 球员信息缓存（最多 50 条，30 分钟 TTL） */
 export const playerCache = createCache<unknown>({
-  maxSize:      50,
+  maxSize: 50,
   defaultTtlMs: 30 * 60 * 1000,
 });
 
 /** LLM 响应缓存（最多 1000 条，5 分钟 TTL，用于相同 prompt 去重） */
 export const llmResponseCache = createCache<string>({
-  maxSize:      1000,
+  maxSize: 1000,
   defaultTtlMs: 5 * 60 * 1000,
 });

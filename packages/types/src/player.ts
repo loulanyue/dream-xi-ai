@@ -21,10 +21,10 @@ export type PlayerId = "leo" | "andre" | "flash" | "wall" | "gate";
 
 /** 球场位置 */
 export type PlayerPosition =
-  | "captain"     // #10 队长 — 组织核心
-  | "midfielder"  // #8 中场 — 引擎
-  | "striker"     // #9 前锋 — 射手
-  | "defender"    // #4 后卫 — 磐石
+  | "captain" // #10 队长 — 组织核心
+  | "midfielder" // #8 中场 — 引擎
+  | "striker" // #9 前锋 — 射手
+  | "defender" // #4 后卫 — 磐石
   | "goalkeeper"; // #1 门将 — 质量门禁
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -33,14 +33,14 @@ export type PlayerPosition =
 
 /** 支持的 AI 模型提供商 */
 export type ModelProvider =
-  | "anthropic"   // Claude (Opus / Sonnet / Haiku)
-  | "openai"      // GPT / Codex
-  | "google"      // Gemini
-  | "opencode"    // opencode (多模型)
-  | "moonshot"    // Kimi
-  | "zhipu"       // 智谱 GLM
-  | "minimax"     // MiniMax
-  | "custom";     // 自定义 OpenAI 兼容接口
+  | "anthropic" // Claude (Opus / Sonnet / Haiku)
+  | "openai" // GPT / Codex
+  | "google" // Gemini
+  | "opencode" // opencode (多模型)
+  | "moonshot" // Kimi
+  | "zhipu" // 智谱 GLM
+  | "minimax" // MiniMax
+  | "custom"; // 自定义 OpenAI 兼容接口
 
 /** 模型标识符，例如 "claude-opus-4-5"、"gpt-4o"、"gemini-2.0-flash" */
 export type ModelId = string;
@@ -51,11 +51,11 @@ export type ModelId = string;
 
 /** 球员当前上场状态 */
 export type PlayerStatus =
-  | "active"    // 在场 — 可接球
-  | "busy"      // 处理中 — 正在跑位
-  | "idle"      // 待命 — 等待指令
-  | "benched"   // 替补席 — 未配置 API Key
-  | "offline";  // 离线 — 服务不可用
+  | "active" // 在场 — 可接球
+  | "busy" // 处理中 — 正在跑位
+  | "idle" // 待命 — 等待指令
+  | "benched" // 替补席 — 未配置 API Key
+  | "offline"; // 离线 — 服务不可用
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 球员定义（Player Definition）
@@ -63,16 +63,16 @@ export type PlayerStatus =
 
 /** 球员能力标签 */
 export type PlayerCapability =
-  | "architecture"    // 架构设计
-  | "code-review"     // 代码审查
-  | "security"        // 安全分析
-  | "testing"         // 测试
-  | "design"          // 创意设计
-  | "prototyping"     // 快速原型
-  | "infrastructure"  // 基础设施
-  | "reasoning"       // 复杂推理
-  | "writing"         // 文档写作
-  | "data-analysis";  // 数据分析
+  | "architecture" // 架构设计
+  | "code-review" // 代码审查
+  | "security" // 安全分析
+  | "testing" // 测试
+  | "design" // 创意设计
+  | "prototyping" // 快速原型
+  | "infrastructure" // 基础设施
+  | "reasoning" // 复杂推理
+  | "writing" // 文档写作
+  | "data-analysis"; // 数据分析
 
 /** 球员静态定义（不随状态变化） */
 export interface PlayerDefinition {
