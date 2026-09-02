@@ -15,16 +15,30 @@
 export function parseJsonBlock<T = unknown>(text: string): T {
   // 匹配 ```json ... ``` 块，支持不规范的缩写如 ```
   const match = text.match(/```(?:json)?\s*([\s\S]*?)\s*```/);
-  const jsonContent = match ? match[1] : text;
+  const jsonContent = (match ? match[1] : text)?.trim() ?? "";
 
   if (!jsonContent) {
     throw new Error("No JSON content found in LLM response");
   }
 
+  // 辅助函数：清理 JSON 中的单行注释与尾随逗号
+  const sanitizeJsonString = (raw: string): string => {
+    return raw
+      .replace(/\/\/.*$/gm, "") // 移除单行注释
+      .replace(/,\s*([}\]])/g, "$1") // 移除对象或数组末尾的多余逗号
+      .trim();
+  };
+
   try {
-    return JSON.parse(jsonContent.trim()) as T;
+    return JSON.parse(jsonContent) as T;
   } catch (err) {
-    // 降级尝试：寻找第一个 { 或 [ 到最后一个 } 或 ]
+    // 尝试清洗后二次解析
+    try {
+      return JSON.parse(sanitizeJsonString(jsonContent)) as T;
+    } catch {
+      // 继续降级尝试：寻找第一个 { 或 [ 到最后一个 } 或 ]
+    }
+
     const firstBrace = jsonContent.indexOf("{");
     const firstBracket = jsonContent.indexOf("[");
     let startIdx = -1;
@@ -45,7 +59,11 @@ export function parseJsonBlock<T = unknown>(text: string): T {
         try {
           return JSON.parse(sliced) as T;
         } catch {
-          // ignore, throw original err
+          try {
+            return JSON.parse(sanitizeJsonString(sliced)) as T;
+          } catch {
+            // ignore, throw original err
+          }
         }
       }
     }

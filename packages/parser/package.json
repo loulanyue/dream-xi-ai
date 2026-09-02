@@ -14,6 +14,7 @@
   },
   "scripts": {
     "build": "tsc --project tsconfig.json",
+    "test": "node --test dist/index.test.js",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist"
   },
