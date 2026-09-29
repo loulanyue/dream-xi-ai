@@ -334,6 +334,17 @@ We're not building tools. We're building a team.
 >
 > **XI & You — 梦之队与你，一起征战，一起夺冠。**
 
+## 🔌 Control Plane & Workflow Engine Integration
+
+For production environments requiring distributed orchestration, heartbeat leasing, and task scheduling, Dream XI AI integrates seamlessly with **[Agent Control](https://github.com/loulanyue/agent-control)**:
+
+- **Distributed Control Plane**: Provides agent heartbeat state machines, task leasing, capability matching, and dead-agent eviction.
+- **DAG Workflow Execution**: Schedule and monitor complex multi-agent plays and match formations through a centralized DAG execution engine.
+- **Model Context Protocol (MCP) Hub**: Native MCP server bridging Dream XI squad members directly to Claude Desktop, Cursor, and backend databases.
+- **Live Observability Dashboard**: Out-of-the-box web console (`/dashboard`) for real-time tracking of agent heartbeats, task queues, and data ingestion pipelines.
+
+---
+
 ## FAQ
 
 **Q: Do I need all four model API keys to start?**
