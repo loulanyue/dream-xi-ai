@@ -165,6 +165,17 @@ AI 不必是冰冷的 API 和无状态调用。它可以是陪伴——记住你
 >
 > **XI & You — 梦之队与你，一起征战，一起夺冠。**
 
+## 🔌 控制面与工作流引擎集成 (Control Plane Integration)
+
+在需要分布式编排、心跳租约与任务队列调度的生产场景中，Dream XI AI 可无缝对接 **[Agent Control](https://github.com/loulanyue/agent-control)** 控制面：
+
+- **分布式控制面与状态机**：提供 Agent 节点注册、心跳租约、能力标签匹配与异常节点超时驱逐。
+- **DAG 图工作流编排**：通过中央控制面调度和可视化复杂的多智能体战术演练与任务流水线。
+- **原生 MCP (Model Context Protocol) 枢纽**：通过标准 JSON-RPC 协议将梦之队队员无缝连接到 Claude Desktop、Cursor 等开发环境。
+- **统一可观测看板**：开箱即用可视化面板（`/dashboard`），实时监控 Agent 心跳健康度、任务生命周期与日志流。
+
+---
+
 ## 常见问题（FAQ）
 
 **Q：我需要同时配置四个模型的 API Key 才能开始使用吗？**
