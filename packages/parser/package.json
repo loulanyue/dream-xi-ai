@@ -15,6 +15,7 @@
   "scripts": {
     "build": "tsc --project tsconfig.json",
     "typecheck": "tsc --noEmit",
+    "test": "node --test --experimental-strip-types src/index.test.ts",
     "clean": "rimraf dist"
   },
   "devDependencies": {
