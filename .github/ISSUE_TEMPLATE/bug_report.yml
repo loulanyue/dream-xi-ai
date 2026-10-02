@@ -1,0 +1,78 @@
+name: 🩹 伤病报告（Bug Report）
+description: 在球场上发现了问题或运行时异常？提交详细回放帮助全队排障
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢提交伤病报告！请尽可能详尽地填写比赛回放与球场环境，以便全队（Leo、André、Flash、Wall）协同排障与修复。
+  - type: dropdown
+    id: package
+    attributes:
+      label: 涉及的球员/模块（Package）
+      description: 请选择引发异常的核心子包
+      options:
+        - "packages/agent (球员核心)"
+        - "packages/parser (LLM 响应解析)"
+        - "packages/server (协同服务调度)"
+        - "packages/mcp-client (MCP 工具共享)"
+        - "packages/pipeline (任务流水线)"
+        - "packages/router (A2A 消息路由)"
+        - "packages/tactic (战术与技能)"
+        - "packages/memory (记忆与回放)"
+        - "packages/queue (任务队列)"
+        - "packages/event-bus (事件总线)"
+        - "other (其他基础依赖)"
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 🏟️ 球场条件（环境信息）
+      description: 请提供运行环境版本
+      placeholder: |
+        Node.js version: v20.x
+        pnpm version: 9.x
+        OS: macOS / Linux / Windows
+        Model: Claude 3.5 Sonnet / GPT-4o / Gemini 1.5 Pro
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: 🎯 期望行为（应该进的球）
+      description: 请描述预期的协同运行结果
+      placeholder: 期望球员之间无障碍传递上下文，正常生成交付物...
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: ❌ 实际行为（实际发生的犯规/异常）
+      description: 请粘贴完整的错误日志或异常堆栈
+      placeholder: 粘贴报错或终端日志
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: 🔁 比赛回放（复现步骤）
+      description: 请提供可复现该问题的最简步骤或代码
+      placeholder: |
+        1. 启动服务 `pnpm start`
+        2. 发起协作任务...
+        3. 观察到异常抛出...
+    validations:
+      required: true
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: 赛前核对
+      options:
+        - label: 我已在现有 Issue / Discussions 中搜索过，确认没有重复报告
+          required: true
+        - label: 我已提供完整的复现信息与环境日志
+          required: true

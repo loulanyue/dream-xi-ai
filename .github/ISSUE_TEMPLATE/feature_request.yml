@@ -1,0 +1,39 @@
+name: 💡 新战术需求（Feature Request）
+description: 建议新的 Multi-Agent 阵型、协同协议、工具插件或平台能力
+title: "[Feature]: "
+labels: ["enhancement", "tactic"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        每个梦想都值得拥有一支踢出冠军水准的梦之队。欢迎为 Dream XI 提出全新战术构想！
+  - type: textarea
+    id: problem
+    attributes:
+      label: 🥊 战术痛点（面临的比赛困境）
+      description: 目前的哪些多智能体协作或开发场景体验不够流畅？
+      placeholder: 当面临跨大模型长链路代码生成与双盲评审时，由于...
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 🏆 战术提议（建议的新打法/新特性）
+      description: 请详细描述你所期望的特性、API 设计或球员角色分配
+      placeholder: 增加一个新的 @dream-xi/xxx 包，或者扩展现有的 Agent 协作协议...
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 🔄 替补方案（其他考虑过的替代方案）
+      description: 是否有任何替代的打法或现存的临时解决方案？
+    validations:
+      required: false
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: 愿否上场参赛？
+      options:
+        - label: 我愿意作为球员（Contributor）亲自提交 Pull Request 落地此特性
+          required: false

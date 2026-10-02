@@ -9,8 +9,11 @@
 *Every dream deserves a squad that plays like champions.*
 
 [![License: Apache-2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/badge/Release-v1.8.0--alpha-10b981.svg)](https://github.com/loulanyue/dream-xi-ai/releases)
+[![CI](https://github.com/loulanyue/dream-xi-ai/actions/workflows/ci.yml/badge.svg)](https://github.com/loulanyue/dream-xi-ai/actions/workflows/ci.yml)
 [![Node.js](https://img.shields.io/badge/Node.js-20+-339933?logo=node.js&logoColor=white)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![MCP](https://img.shields.io/badge/MCP-Compatible-9333ea.svg?logo=anthropic&logoColor=white)](https://modelcontextprotocol.io)
 [![GitHub Stars](https://img.shields.io/github/stars/loulanyue/dream-xi-ai?style=flat&color=FFD700&logo=github&label=Stars)](https://github.com/loulanyue/dream-xi-ai/stargazers)
 [![Packages](https://img.shields.io/badge/Packages-35-8B5CF6?logo=npm&logoColor=white)](packages/)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)

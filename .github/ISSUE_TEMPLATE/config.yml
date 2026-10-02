@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 球员更衣室与战术讨论（GitHub Discussions）
+    url: https://github.com/loulanyue/dream-xi-ai/discussions
+    about: 欢迎前往讨论区畅聊多智能体战术、阵型灵感与最佳实践
+  - name: 🛡️ 门将安全防护（Security Policy）
+    url: https://github.com/loulanyue/dream-xi-ai/security/policy
+    about: 若发现任何安全弱点或敏感信息泄露，请按安全协议私密报告
+  - name: 🎮 Agent Control 控制面后台
+    url: https://github.com/loulanyue/agent-control
+    about: Dream XI 官方推荐的分布式控制面与任务调度底座

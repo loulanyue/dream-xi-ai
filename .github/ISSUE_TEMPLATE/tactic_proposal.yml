@@ -1,0 +1,45 @@
+name: ⚽ 经典阵型贡献（Formation Proposal）
+description: 提交或分享经过实战验证的 Multi-Agent 协作阵型（如 4-3-3 全栈流、4-2-3-1 质检流）
+title: "[Formation]: "
+labels: ["formation", "showcase"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        将你的 AI Agents 组装为一支冠军级阵型！分享你的首发阵容分配与协同策略。
+  - type: input
+    id: formation_name
+    attributes:
+      label: 阵型代号与名称
+      placeholder: 如：4-3-3 全栈敏捷交付阵型 / 3-5-2 深度投研推演阵型
+    validations:
+      required: true
+  - type: textarea
+    id: lineup
+    attributes:
+      label: 🎽 首发阵容与球员分工（Lineup）
+      description: 列出队长(#10)、组织核心(#8)、前锋(#9)、后卫(#4)及门将(#1)分别绑定的 LLM 模型与提示词专精
+      placeholder: |
+        - 队长 (#10 Leo / Claude 3.5 Sonnet): 架构决策与需求把控
+        - 组织中场 (#8 André / GPT-4o): 代码双盲评审与测试用例驱动
+        - 终结前锋 (#9 Flash / Gemini 1.5 Pro): 高速模块编写与 UI 视觉
+        - 铁血后卫 (#4 Wall / OpenCode): 安全防护与边界扫描
+      render: markdown
+    validations:
+      required: true
+  - type: textarea
+    id: tactical_flow
+    attributes:
+      label: 🔄 传递与配合流程（Tactical Flow）
+      description: 球员之间的传球协议与交互链路
+      placeholder: 队长发起需求拆解 -> 前锋初版实现 -> 中场双向评审 -> 后卫安全断球 -> 门将守门合并
+    validations:
+      required: true
+  - type: textarea
+    id: formation_json
+    attributes:
+      label: 📋 阵型配置 JSON（可选）
+      description: 可直接粘贴符合 Dream XI 规范的阵型 JSON 片段
+      render: json
+    validations:
+      required: false
