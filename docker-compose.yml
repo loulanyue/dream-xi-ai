@@ -1,0 +1,58 @@
+services:
+  # ----------------------------------------------------------------------------
+  # Dream XI AI Coordination Server & Match Control Plane
+  # ----------------------------------------------------------------------------
+  dream-xi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dream-xi-ai-server
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "8080:8000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - MEMORY_MODE=redis
+      - REDIS_URL=redis://redis:6379
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-}
+      - AGENT_CONTROL_URL=${AGENT_CONTROL_URL:-http://host.docker.internal:8000}
+    depends_on:
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    networks:
+      - dream-xi-net
+
+  # ----------------------------------------------------------------------------
+  # Episodic Memory Store (Redis)
+  # ----------------------------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: dream-xi-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    networks:
+      - dream-xi-net
+
+networks:
+  dream-xi-net:
+    driver: bridge
+
+volumes:
+  redis-data:

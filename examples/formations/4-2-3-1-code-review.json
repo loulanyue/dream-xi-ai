@@ -1,0 +1,78 @@
+{
+  "name": "4-2-3-1 Strict Code Review & Security Defense",
+  "formation": "4-2-3-1",
+  "description": "Double-pivot defensive formation designed for mission-critical audit, pull request triage, and automated vulnerability scanning.",
+  "captain": "André",
+  "lineup": [
+    {
+      "shirt_number": 8,
+      "name": "André",
+      "position": "Captain / Defensive Pivot",
+      "model": "gpt-4o",
+      "responsibilities": [
+        "Diff parsing and code logic inspection",
+        "Performance bottleneck profiling",
+        "Review comment synthesis"
+      ],
+      "tactics": ["double-blind-audit", "performance-guard"]
+    },
+    {
+      "shirt_number": 4,
+      "name": "Wall",
+      "position": "Sweeper Defender",
+      "model": "opencode-deepseek",
+      "responsibilities": [
+        "Static code analysis & CVE pattern detection",
+        "Secret scanner (API keys, tokens, credentials)",
+        "Input sanitization gatekeeping"
+      ],
+      "tactics": ["ast-scan", "secret-detection"]
+    },
+    {
+      "shirt_number": 10,
+      "name": "Leo",
+      "position": "Attacking Midfielder",
+      "model": "claude-3-5-sonnet",
+      "responsibilities": [
+        "High-level architecture alignment verification",
+        "Refactoring suggestion generator",
+        "Documentation consistency check"
+      ],
+      "tactics": ["clean-architecture", "doc-sync"]
+    },
+    {
+      "shirt_number": 1,
+      "name": "Keeper",
+      "position": "Goalkeeper",
+      "model": "claude-3-haiku",
+      "responsibilities": [
+        "Merge readiness sign-off",
+        "CI gate verification",
+        "Final safety net check"
+      ],
+      "tactics": ["gate-check", "final-intercept"]
+    }
+  ],
+  "passing_flow": [
+    {
+      "from": "André",
+      "to": "Wall",
+      "handoff": "Raw diff & commit history"
+    },
+    {
+      "from": "Wall",
+      "to": "Leo",
+      "handoff": "AST report & vulnerability scan"
+    },
+    {
+      "from": "Leo",
+      "to": "Keeper",
+      "handoff": "Architectural review & refactor plan"
+    },
+    {
+      "from": "Keeper",
+      "to": "André",
+      "handoff": "Final approved merge verdict"
+    }
+  ]
+}

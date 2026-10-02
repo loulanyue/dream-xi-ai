@@ -104,6 +104,16 @@ pnpm start
 
 Open `http://localhost:3003` → go to **Dugout → System Settings → Account Configuration** to add your model API keys.
 
+### Option C: Docker Compose (Zero-Setup)
+
+Spin up the complete Dream XI coordination server and Redis memory store in one command without local Node/pnpm setup:
+
+```bash
+docker-compose up -d
+```
+
+Visit `http://localhost:3000` to interact with your squad. Explore pre-configured tactical formations in **[examples/formations](./examples/)**.
+
 **Full setup guide**: **[SETUP.md](SETUP.md)**
 
 ## The Fair Play Rules

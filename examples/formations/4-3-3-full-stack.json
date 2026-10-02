@@ -1,0 +1,83 @@
+{
+  "name": "4-3-3 Full-Stack Agile Delivery",
+  "formation": "4-3-3",
+  "description": "Premier attacking formation optimized for full-stack feature delivery with strict cross-position peer review and security guardrails.",
+  "captain": "Leo",
+  "lineup": [
+    {
+      "shirt_number": 10,
+      "name": "Leo",
+      "position": "Playmaker / Captain",
+      "model": "claude-3-5-sonnet",
+      "responsibilities": [
+        "Architectural design and technical requirements decomposition",
+        "Context synthesis and tactical delegation",
+        "Final match outcome sign-off"
+      ],
+      "tactics": ["spec-driven", "chain-of-thought"]
+    },
+    {
+      "shirt_number": 8,
+      "name": "André",
+      "position": "Midfield Engine",
+      "model": "gpt-4o",
+      "responsibilities": [
+        "Double-blind peer code review",
+        "Test-driven validation (TDD)",
+        "Edge case discovery and boundary inspection"
+      ],
+      "tactics": ["strict-review", "tdd-validation"]
+    },
+    {
+      "shirt_number": 9,
+      "name": "Flash",
+      "position": "Striker",
+      "model": "gemini-1.5-pro",
+      "responsibilities": [
+        "Rapid code generation and UI prototyping",
+        "Creative problem solving and alternative implementations",
+        "Visual design and frontend components"
+      ],
+      "tactics": ["rapid-strike", "clean-code"]
+    },
+    {
+      "shirt_number": 4,
+      "name": "Wall",
+      "position": "Center Back Defender",
+      "model": "opencode-deepseek",
+      "responsibilities": [
+        "Security boundary checks and secret leakage prevention",
+        "Syntax and typing validation",
+        "Defensive refactoring and lint conformance"
+      ],
+      "tactics": ["security-gate", "zero-vulnerability"]
+    }
+  ],
+  "passing_flow": [
+    {
+      "from": "Leo",
+      "to": "Flash",
+      "handoff": "Architecture spec & API contract"
+    },
+    {
+      "from": "Flash",
+      "to": "André",
+      "handoff": "Initial implementation PR & unit tests"
+    },
+    {
+      "from": "André",
+      "to": "Wall",
+      "handoff": "Reviewed code & edge case checklist"
+    },
+    {
+      "from": "Wall",
+      "to": "Leo",
+      "handoff": "Hardened artifacts ready for captain approval"
+    }
+  ],
+  "quality_gate": {
+    "require_midfield_review": true,
+    "require_defender_clearance": true,
+    "max_retry_passes": 3
+  }
+}

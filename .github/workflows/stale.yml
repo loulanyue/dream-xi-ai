@@ -1,0 +1,27 @@
+name: Maintenance — 更衣室日常整理（Stale Triage）
+
+on:
+  schedule:
+    - cron: "0 0 * * 1" # Weekly every Monday
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  pull-requests: write
+
+jobs:
+  stale:
+    name: 🧹 Stale Issues & PRs Triage
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 60
+          days-before-close: 7
+          stale-issue-message: "此比赛问题已沉寂超过 60 天。若仍需更衣室讨论或战术演进，请留下新的评论；否则 7 天后将自动终场封存。"
+          stale-pr-message: "此入队审批 PR 已沉寂超过 60 天。若仍有合并意愿，请同步最新 main 分支代码并回复；否则 7 天后将自动挂起。"
+          stale-issue-label: "stale"
+          stale-pr-label: "stale"
+          exempt-issue-labels: "pinned,security,roadmap,formation"
+          exempt-pr-labels: "work-in-progress,roadmap"

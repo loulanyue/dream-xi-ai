@@ -92,6 +92,16 @@ pnpm start
 
 打开 `http://localhost:3003` → 进入 **更衣室 → 系统设置 → 账号配置** 添加模型 API Key。
 
+### 方式二：Docker Compose 一键启动（零本地配置）
+
+无需安装本地 Node/pnpm 环境，一条命令拉起完整的 Dream XI 协同服务与 Redis 记忆存储：
+
+```bash
+docker-compose up -d
+```
+
+访问 `http://localhost:3000` 即可与球队交互。查看预置经典战术阵型：**[examples/formations](./examples/)**。
+
 **完整部署指南**：**[SETUP.md](SETUP.md)**
 
 ## 球队铁律 (Fair Play)

@@ -1,0 +1,57 @@
+name: Release — 官方赛后奖杯与产物发布（Release & Distribution）
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+  packages: write
+
+jobs:
+  build-and-release:
+    name: 🏆 Build & Release Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run Quality Gate Checks
+        run: |
+          pnpm run lint
+          pnpm run typecheck
+
+      - name: Build all packages
+        run: pnpm run build
+
+      - name: Create Tarball of Distribution Artifacts
+        run: |
+          tar -czf dream-xi-dist.tar.gz packages/*/dist examples
+
+      - name: Generate Release Notes & Publish
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Dream XI AI ${{ github.ref_name }}"
+          generate_release_notes: true
+          draft: false
+          prerelease: ${{ contains(github.ref_name, 'alpha') || contains(github.ref_name, 'beta') }}
+          files: |
+            dream-xi-dist.tar.gz
+            docker-compose.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
